@@ -41,3 +41,5 @@ yarn-error.log*
 # EAS Build Artifacts
 eas-cache/
 eas-build/
+
+example-app
