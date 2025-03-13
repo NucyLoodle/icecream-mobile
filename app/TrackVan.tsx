@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable, Alert, StyleSheet } from "react-native";
+import { Text, Pressable, Alert, StyleSheet } from "react-native";
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -8,16 +8,6 @@ import {
 } from 'react-native-safe-area-context';
 import * as Location from "expo-location";
 import endpoint from '../endpoints.config';
-
-import {
-  Poppins_400Regular,
-}  from "@expo-google-fonts/poppins";
-
-import {
-  useFonts,
-  AlfaSlabOne_400Regular,
-} from "@expo-google-fonts/alfa-slab-one";
-
 
 const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
@@ -83,7 +73,6 @@ const TrackVan: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
         <Text style={styles.heading}>Van Tracking</Text>
 
         <Pressable
@@ -99,14 +88,11 @@ const TrackVan: React.FC = () => {
 
         {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
         {location ? (
-          <Text>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
+          <Text style={styles.text}>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
         ) : (
-          <Text>Location not available</Text>
+          <Text style={styles.text}>Location not available</Text>
         )}
 
-        
-
-      </View>
     </SafeAreaView>
   );
 };
@@ -123,7 +109,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#eab2bb',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
   },
   heading: {
     color: '#3c6ca8',
