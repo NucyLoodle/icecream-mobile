@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, Alert } from "react-native";
+import { View, Text, Pressable, Alert, StyleSheet } from "react-native";
 import * as Location from "expo-location";
 import endpoint from '../endpoints.config';
+
+import {
+  Poppins_400Regular,
+}  from "@expo-google-fonts/poppins";
 
 
 const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
@@ -67,17 +71,57 @@ const TrackVan: React.FC = () => {
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text>Van Tracking</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Van Tracking</Text>
       {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
       {location ? (
         <Text>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
       ) : (
         <Text>Location not available</Text>
       )}
-      <Button title="Start Tracking" onPress={startTracking} />
+
+      <Pressable
+          onPress={startTracking}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
+            },
+            styles.wrapperCustom,
+          ]}>
+          {({pressed}) => (
+            <Text style={styles.text}>Share Location</Text>
+          )}
+      </Pressable>
+
     </View>
   );
 };
 
+
+
+
+
+
 export default TrackVan;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#eab2bb',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  text: {
+    color: '#3c6ca8',
+    fontFamily: 'Poppins_400Regular',
+  },
+  button: {
+    fontSize: 20,
+    textDecorationLine: 'underline',
+    color: '#fff',
+  },
+  wrapperCustom: {
+    borderRadius: 8,
+    padding: 6,
+  },
+});
