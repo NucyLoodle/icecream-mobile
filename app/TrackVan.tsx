@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, Alert } from "react-native";
 import * as Location from "expo-location";
-import endpoint from '../../endpoints.config';
+import endpoint from '../endpoints.config';
 
 
 const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
