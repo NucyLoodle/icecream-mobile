@@ -7,6 +7,11 @@ import {
   Poppins_400Regular,
 }  from "@expo-google-fonts/poppins";
 
+import {
+  useFonts,
+  AlfaSlabOne_400Regular,
+} from "@expo-google-fonts/alfa-slab-one";
+
 
 const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
@@ -72,7 +77,19 @@ const TrackVan: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Van Tracking</Text>
+      <Text style={styles.heading}>Van Tracking</Text>
+
+      <Pressable
+          onPress={startTracking}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? '#b8ecce' : '#eee060',
+            },
+            styles.wrapperCustom,
+          ]}>         
+          <Text style={styles.pressable}>Share Location</Text>        
+      </Pressable>
+
       {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
       {location ? (
         <Text>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
@@ -80,18 +97,7 @@ const TrackVan: React.FC = () => {
         <Text>Location not available</Text>
       )}
 
-      <Pressable
-          onPress={startTracking}
-          style={({pressed}) => [
-            {
-              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
-            },
-            styles.wrapperCustom,
-          ]}>
-          {({pressed}) => (
-            <Text style={styles.text}>Share Location</Text>
-          )}
-      </Pressable>
+      
 
     </View>
   );
@@ -111,14 +117,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  heading: {
+    color: '#3c6ca8',
+    fontFamily: 'AlfaSlabOne_400Regular',
+    fontSize: 20,
+  },
   text: {
     color: '#3c6ca8',
     fontFamily: 'Poppins_400Regular',
-  },
-  button: {
     fontSize: 20,
-    textDecorationLine: 'underline',
-    color: '#fff',
+  },
+  pressable: {
+    fontSize: 20,
+    color: '#3e1755',
   },
   wrapperCustom: {
     borderRadius: 8,
