@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, Alert, StyleSheet } from "react-native";
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import * as Location from "expo-location";
 import endpoint from '../endpoints.config';
 
@@ -76,30 +82,32 @@ const TrackVan: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Van Tracking</Text>
+    <SafeAreaView style={styles.container}>
+      <View>
+        <Text style={styles.heading}>Van Tracking</Text>
 
-      <Pressable
-          onPress={startTracking}
-          style={({pressed}) => [
-            {
-              backgroundColor: pressed ? '#b8ecce' : '#eee060',
-            },
-            styles.wrapperCustom,
-          ]}>         
-          <Text style={styles.pressable}>Share Location</Text>        
-      </Pressable>
+        <Pressable
+            onPress={startTracking}
+            style={({pressed}) => [
+              {
+                backgroundColor: pressed ? '#b8ecce' : '#eee060',
+              },
+              styles.wrapperCustom,
+            ]}>         
+            <Text style={styles.pressable}>Share Location</Text>        
+        </Pressable>
 
-      {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
-      {location ? (
-        <Text>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
-      ) : (
-        <Text>Location not available</Text>
-      )}
+        {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
+        {location ? (
+          <Text>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
+        ) : (
+          <Text>Location not available</Text>
+        )}
 
-      
+        
 
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
