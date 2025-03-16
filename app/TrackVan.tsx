@@ -7,7 +7,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import * as Location from "expo-location";
-import endpoint from '../endpoints.config';
+
 
 const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
@@ -18,7 +18,12 @@ const TrackVan: React.FC = () => {
 
   useEffect(() => {
     const connectWebSocket = () => {
-      const socket = new WebSocket(endpoint.WebSocketUrl);
+      const websocketUrl = process.env.EXPO_PUBLIC_WEBSOCKET_URL;
+      if (!websocketUrl) {
+        console.error("WebSocket URL is not defined");
+        return;
+      }
+      const socket = new WebSocket(websocketUrl);
 
       socket.onopen = () => console.log("Connected to WebSocket");
       socket.onerror = (error) => console.error("WebSocket Error:", error);
