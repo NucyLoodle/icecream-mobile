@@ -37,8 +37,9 @@ yarn-error.log*
 *.p12
 *.key
 *.mobileprovision
-endpoints.config.ts
-devices.json
+config.ts
+
+
 
 # EAS Build Artifacts
 eas-cache/
