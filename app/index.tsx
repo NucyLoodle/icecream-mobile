@@ -46,7 +46,11 @@ export default function Index() {
       
       <Link href="/TrackVan" style={styles.button}>
       Go to Track Van screen
-    </Link>
+      </Link>
+
+      <Link href="/createInvite" style={styles.button}>
+        Go to createInvite screen
+      </Link>
     </View>
   );
 }
