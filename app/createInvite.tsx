@@ -26,6 +26,7 @@ export default function signUpCompany() {
     async function createInvite(email: string): Promise<void> {
         const inviteToken: string = crypto.randomUUID();
         const companyid: string = crypto.randomUUID();
+        const expiresAt: string = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // Expires in 7 days
     
         await sql`
             INSERT INTO sign_up_codes (company_id, email, sign_up_token, expires_at)
