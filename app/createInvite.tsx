@@ -1,19 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Text, Pressable, Alert, StyleSheet } from "react-native";
+import { Text, TextInput, Pressable, Alert, StyleSheet, Button } from "react-native";
 import {
   SafeAreaView,
   SafeAreaProvider,
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import postgres from 'postgres';
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
+
+const schema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+  });
+
+
 
 export default function signUpCompany() {
 
-    if (!process.env.POSTGRES_URL) {
-        throw new Error('POSTGRES_URL is not defined');
-    }
-    const sql = postgres(process.env.POSTGRES_URL, { ssl: 'require' });
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+      } = useForm({
+        resolver: zodResolver(schema),
+      });
+
+    // Function to handle form submission
+    const onSubmit = (data: { email: string }) => {
+        console.log(data);
+
+        
+    };
     
     
     interface Invite {
@@ -23,26 +43,34 @@ export default function signUpCompany() {
         expiresAt: string;
     }
     
-    async function createInvite(email: string): Promise<void> {
-        const inviteToken: string = crypto.randomUUID();
-        const companyid: string = crypto.randomUUID();
-        const expiresAt: string = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // Expires in 7 days
     
-        await sql`
-            INSERT INTO sign_up_codes (company_id, email, sign_up_token, expires_at)
-            VALUES (${companyid}, ${email}, ${inviteToken}, ${expiresAt})
-        `;
-    }
 
 
 
     return (
         <SafeAreaView style={styles.container}>
-                <Text style={styles.heading}>Van Tracking</Text>
+            <Text style={styles.heading}>Sign Up</Text>
+
+            <Text>Email</Text>
+            <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                    style={styles.input}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Enter your email"
+                />
+                )}
+            />
+            {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+            
+            <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+            
         
-                
-        
-            </SafeAreaView>
+        </SafeAreaView>
     )
 }
 
@@ -70,6 +98,16 @@ const styles = StyleSheet.create({
   wrapperCustom: {
     borderRadius: 8,
     padding: 6,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 8,
+  },
+  error: {
+    color: "red",
   },
 });
 
