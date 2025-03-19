@@ -37,7 +37,11 @@ export default function SignUpCompany() {
 
       Alert.alert("Success", `Invite created! Token: ${result.inviteToken}`);
     } catch (error: any) {
-      Alert.alert("Error", error.message);
+        if (error.message === "Email already exists") {
+            Alert.alert("Error", "You've already signed up. Check your email for your code.");
+          } else {
+            Alert.alert("Error", error.message);
+          }
     }
   };
 
