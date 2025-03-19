@@ -21,7 +21,7 @@ export default function SignUpCompany() {
   // Function to handle form submission
   const onSubmit = async (data: { email: string }) => {
     try {
-      const response = await fetch("icecream-web-one.vercel.app", {
+      const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
