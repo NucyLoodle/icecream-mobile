@@ -5,6 +5,19 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+
+// company sign up form
+// company signs up with email, telephone, password, company name, company website, registered business number,
+// company is queried to check if it already exists in the database
+// if it does, an error message is displayed asking company to check email for verify code
+// if it does not, Companies House API is queried to check if company exists
+// if it does, company is added to the database and a verification email is sent
+// if it does not, Google Places API is queried to check if company exists
+// if it does, company is added to the database and a verification email is sent
+// if it does not, an error message is displayed stating that the details cannot be verified at this time but it has been passed to an administrator
+// company is added to the database with a status of pending verification
+
+
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
