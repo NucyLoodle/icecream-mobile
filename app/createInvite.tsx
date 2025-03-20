@@ -39,22 +39,24 @@ export default function SignUpCompany() {
   });
 
   // Function to handle form submission
-  const onSubmit = async (data: { email: string }) => {
+  const onSubmit = async (data: any) => {
+    console.log(data); //debugging statement
     try {
       const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: data.email }),
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to create invite");
-      }
-
+      } 
+      // query Companies House API
+      // query Google Places API
       Alert.alert("Success", `Invite created! Token: ${result.inviteToken}`);
     } catch (error: any) {
         if (error.message === "Email already exists") {
