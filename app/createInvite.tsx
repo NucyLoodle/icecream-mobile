@@ -19,13 +19,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 
 const schema = z.object({
+  ownerFirstName: z.string()
+                   .nonempty({ message: "Your first name is required" }),
+  ownerSurname: z.string()
+                 .nonempty({ message: "Your surname is required" }),
   companyName: z.string()
                 .nonempty({ message: "Company name is required" })
                 .min(2, { message: "Must be at least 2 characters" }),
   companyWebsite: z.string().url({ message: "Invalid URL" }), // edit to be optional
   companyNumber: z.string().min(8, { message: "Invalid company number" }), //edit to be optional
-  email: z.string().email({ message: "Invalid email address" }),
-  telephone: z.string().min(10, { message: "Invalid telephone number" }),
+  email: z.string()
+          .email({ message: "Invalid email address" })
+          .nonempty({ message: "Email is required" }),
+  telephone: z.string()
+              .min(10, { message: "Invalid telephone number" })
+              .nonempty({ message: "Telephone number is required" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }),
 });
 
@@ -77,6 +85,37 @@ export default function SignUpCompany() {
       <Text style={styles.heading}>Sign Up</Text>
       <Text>Please provide as many details as possible as this will help us verify your company.</Text>
 
+      <Text>First Name</Text>
+      <Controller
+        control={control}
+        name="ownerFirstName"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your first name"
+          />
+        )}
+      />
+      {errors.ownerFirstName && <Text style={styles.error}>{errors.ownerFirstName.message}</Text>}
+
+      <Text>Surname</Text>
+      <Controller
+        control={control}
+        name="ownerSurname"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your first name"
+          />
+        )}
+      />
+      {errors.ownerSurname && <Text style={styles.error}>{errors.ownerSurname.message}</Text>}
 
       <Text>Company Name</Text>
       <Controller
