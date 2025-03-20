@@ -22,8 +22,8 @@ const schema = z.object({
   companyName: z.string()
                 .nonempty({ message: "Company name is required" })
                 .min(2, { message: "Must be at least 2 characters" }),
-  companyWebsite: z.string().url({ message: "Invalid URL" }),
-  companyNumber: z.string().min(8, { message: "Invalid company number" }),
+  companyWebsite: z.string().url({ message: "Invalid URL" }), // edit to be optional
+  companyNumber: z.string().min(8, { message: "Invalid company number" }), //edit to be optional
   email: z.string().email({ message: "Invalid email address" }),
   telephone: z.string().min(10, { message: "Invalid telephone number" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }),
