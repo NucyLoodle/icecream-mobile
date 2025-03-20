@@ -52,15 +52,20 @@ export default function SignUpCompany() {
 
       const result = await response.json();
 
-      if (!response.ok) {
+      if (response.ok) {
+        // If registration is successful, display the invite token
+        Alert.alert("Success", `Invite created! Token: ${result.inviteToken}`);
+      } else {
+        // If response is not OK, throw an error with the message returned from the API
         throw new Error(result.error || "Failed to create invite");
-      } 
-      // query Companies House API
-      // query Google Places API
-      Alert.alert("Success", `Invite created! Token: ${result.inviteToken}`);
+      }
     } catch (error: any) {
-        if (error.message === "Email already exists") {
+        if (error.message === "Pending verification" || error.message === "Unused code") {
             Alert.alert("Error", "You've already signed up. Check your email for your code.");
+          } else if (error.message === "Already registered") {
+            Alert.alert("Error", "You've already signed up. Did you forget your password?"); //navigate to login page
+          } else if (error.message === "Company needs to wait for manual verification") {
+            Alert.alert("Error", "Thanks for signing up. Unfortunately, we couldn't verify your company. We'll get back to you soon.");
           } else {
             Alert.alert("Error", error.message);
           }
@@ -70,6 +75,56 @@ export default function SignUpCompany() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Sign Up</Text>
+      <Text>Please provide as many details as possible as this will help us verify your company.</Text>
+
+
+      <Text>Company Name</Text>
+      <Controller
+        control={control}
+        name="companyName"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your company name"
+          />
+        )}
+      />
+      {errors.companyName && <Text style={styles.error}>{errors.companyName.message}</Text>}
+
+      <Text>Company Website</Text>
+      <Controller
+        control={control}
+        name="companyWebsite"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your website"
+          />
+        )}
+      />
+      {errors.companyWebsite && <Text style={styles.error}>{errors.companyWebsite.message}</Text>}
+
+      <Text>Company Number</Text>
+      <Controller
+        control={control}
+        name="companyNumber"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your company number from Companies House"
+          />
+        )}
+      />
+      {errors.companyNumber && <Text style={styles.error}>{errors.companyNumber.message}</Text>}
 
       <Text>Email</Text>
       <Controller
@@ -86,6 +141,39 @@ export default function SignUpCompany() {
         )}
       />
       {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+
+      <Text>Telephone</Text>
+      <Controller
+        control={control}
+        name="telephone"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your business telephone number"
+          />
+        )}
+      />
+      {errors.telephone && <Text style={styles.error}>{errors.telephone.message}</Text>}
+
+      <Text>Password</Text>
+      <Controller
+        control={control}
+        name="password"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder="Enter your password"
+          />
+        )}
+      />
+      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+
 
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </SafeAreaView>
