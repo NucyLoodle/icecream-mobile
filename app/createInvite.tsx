@@ -26,8 +26,11 @@ const schema = z.object({
   companyName: z.string()
                 .nonempty({ message: "Company name is required" })
                 .min(2, { message: "Must be at least 2 characters" }),
-  companyWebsite: z.string().url({ message: "Invalid URL" }), // edit to be optional
-  companyNumber: z.string().min(8, { message: "Invalid company number" }), //edit to be optional
+  companyWebsite: z.string(), // edit to be optional
+  companyNumber: z.string()
+                .min(8, "Please enter a valid value")
+                .optional(),
+                // .or(z.literal('')),
   email: z.string()
           .email({ message: "Invalid email address" })
           .nonempty({ message: "Email is required" }),
@@ -48,7 +51,16 @@ export default function SignUpCompany() {
 
   // Function to handle form submission
   const onSubmit = async (data: any) => {
+    if (!data.companyNumber) {
+      data.companyNumber = null;
+    }
     console.log(data); //debugging statement
+
+    // if companyNumber is empty, set it to null
+    // if (data.companyNumber === '') {
+    //   data.companyNumber = null;
+    // }
+
     try {
       const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
         method: "POST",
