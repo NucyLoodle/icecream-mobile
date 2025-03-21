@@ -170,6 +170,7 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            autoCapitalize="none"
           />
         )}
       />
@@ -273,15 +274,17 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: "Poppins_400Regular",
+    color: '#3e1755'
   },
   input: {
     height: 40,
     minWidth: 200,
     maxWidth: '100%',
-    borderColor: "gray",
-    borderWidth: 1,
+    backgroundColor: '#eee060',
     marginBottom: 10,
     paddingHorizontal: 8,
+    fontFamily: "Poppins_400Regular",
+    borderRadius: 10,
   },
   error: {
     fontFamily: "Poppins_400Regular",
