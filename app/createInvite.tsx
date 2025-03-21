@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextInput, Button, Alert, StyleSheet, Pressable } from "react-native";
+import { Text, TextInput, Button, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -112,6 +112,7 @@ export default function SignUpCompany() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <Text style={styles.heading}>Sign Up</Text>
       <Text style={styles.text}>Please provide as many details as possible as this will help us verify your company.</Text>
 
@@ -264,7 +265,7 @@ export default function SignUpCompany() {
           <Text style={styles.pressable}>Submit</Text>        
       </Pressable>
 
-
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -299,6 +300,7 @@ const styles = StyleSheet.create({
   pressable: {
     fontSize: 20,
     color: '#3e1755',
+    textAlign: 'center',
   },
   wrapperCustom: {
     minWidth: 200,
