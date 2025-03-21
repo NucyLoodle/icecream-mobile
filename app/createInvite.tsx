@@ -26,11 +26,11 @@ const schema = z.object({
   companyName: z.string()
                 .nonempty({ message: "Company name is required" })
                 .min(2, { message: "Must be at least 2 characters" }),
-  companyWebsite: z.string(), // edit to be optional
+  companyWebsite: z.string().optional(). or(z.literal('')), // edit to be optional
   companyNumber: z.string()
                 .min(8, "Please enter a valid value")
-                .optional(),
-                // .or(z.literal('')),
+                .optional()
+                .or(z.literal('')),
   email: z.string()
           .email({ message: "Invalid email address" })
           .nonempty({ message: "Email is required" }),
@@ -51,15 +51,15 @@ export default function SignUpCompany() {
 
   // Function to handle form submission
   const onSubmit = async (data: any) => {
+    // if companyNumber is empty, set it to null
     if (!data.companyNumber) {
       data.companyNumber = null;
     }
+    // if companyWebsite is empty, set it to null
+    if (!data.companyWebsite) {
+      data.companyWebsite = null;
+    }
     console.log(data); //debugging statement
-
-    // if companyNumber is empty, set it to null
-    // if (data.companyNumber === '') {
-    //   data.companyNumber = null;
-    // }
 
     try {
       const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
@@ -95,9 +95,9 @@ export default function SignUpCompany() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Sign Up</Text>
-      <Text>Please provide as many details as possible as this will help us verify your company.</Text>
+      <Text style={styles.text}>Please provide as many details as possible as this will help us verify your company.</Text>
 
-      <Text>First Name</Text>
+      <Text style={styles.text}>First Name</Text>
       <Controller
         control={control}
         name="ownerFirstName"
@@ -107,13 +107,12 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your first name"
           />
         )}
       />
       {errors.ownerFirstName && <Text style={styles.error}>{errors.ownerFirstName.message}</Text>}
 
-      <Text>Surname</Text>
+      <Text style={styles.text}>Surname</Text>
       <Controller
         control={control}
         name="ownerSurname"
@@ -123,13 +122,12 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your first name"
           />
         )}
       />
       {errors.ownerSurname && <Text style={styles.error}>{errors.ownerSurname.message}</Text>}
 
-      <Text>Company Name</Text>
+      <Text style={styles.text}>Company Name</Text>
       <Controller
         control={control}
         name="companyName"
@@ -139,13 +137,12 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your company name"
           />
         )}
       />
       {errors.companyName && <Text style={styles.error}>{errors.companyName.message}</Text>}
 
-      <Text>Company Website</Text>
+      <Text style={styles.text}>Company Website</Text>
       <Controller
         control={control}
         name="companyWebsite"
@@ -155,13 +152,13 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your website"
           />
         )}
       />
       {errors.companyWebsite && <Text style={styles.error}>{errors.companyWebsite.message}</Text>}
 
-      <Text>Company Number</Text>
+      <Text style={styles.text}>Company Number (from Companies House)</Text>
+      
       <Controller
         control={control}
         name="companyNumber"
@@ -171,13 +168,12 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your company number from Companies House"
           />
         )}
       />
       {errors.companyNumber && <Text style={styles.error}>{errors.companyNumber.message}</Text>}
 
-      <Text>Email</Text>
+      <Text style={styles.text}>Email</Text>
       <Controller
         control={control}
         name="email"
@@ -187,13 +183,13 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your email"
+
           />
         )}
       />
       {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
-      <Text>Telephone</Text>
+      <Text style={styles.text}>Telephone</Text>
       <Controller
         control={control}
         name="telephone"
@@ -203,13 +199,12 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your business telephone number"
           />
         )}
       />
       {errors.telephone && <Text style={styles.error}>{errors.telephone.message}</Text>}
 
-      <Text>Password</Text>
+      <Text style={styles.text}>Password</Text>
       <Controller
         control={control}
         name="password"
@@ -219,7 +214,6 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            placeholder="Enter your password"
           />
         )}
       />
@@ -237,20 +231,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#eab2bb",
     alignItems: "center",
     justifyContent: "space-around",
+    padding: 5,
   },
   heading: {
     color: "#3c6ca8",
     fontFamily: "AlfaSlabOne_400Regular",
     fontSize: 20,
   },
+  text: {
+    fontFamily: "Poppins_400Regular",
+  },
   input: {
     height: 40,
+    minWidth: 200,
+    maxWidth: '100%',
     borderColor: "gray",
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 8,
   },
   error: {
+    fontFamily: "Poppins_400Regular",
     color: "red",
   },
 });
