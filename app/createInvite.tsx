@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextInput, Button, Alert, StyleSheet } from "react-native";
+import { Text, TextInput, Button, Alert, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -253,8 +253,18 @@ export default function SignUpCompany() {
       />
       {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
 
+      <Pressable
+          onPress={handleSubmit(onSubmit)}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? '#eee060' : '#b8ecce',
+            },
+            styles.wrapperCustom,
+          ]}>         
+          <Text style={styles.pressable}>Submit</Text>        
+      </Pressable>
 
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+
     </SafeAreaView>
   );
 }
@@ -285,6 +295,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     fontFamily: "Poppins_400Regular",
     borderRadius: 10,
+  },
+  pressable: {
+    fontSize: 20,
+    color: '#3e1755',
+  },
+  wrapperCustom: {
+    minWidth: 200,
+    borderRadius: 8,
+    padding: 6,
   },
   error: {
     fontFamily: "Poppins_400Regular",
