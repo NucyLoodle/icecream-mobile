@@ -45,6 +45,16 @@ const schema = z.object({
                 message: 'Contain at least one special character.',
               })
               .trim(),
+  confirmPassword: z.string()
+})
+.superRefine((data, ctx) => {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      path: ['confirmPassword'],
+      message: "Passwords don't match",
+      code: z.ZodIssueCode.custom,
+    });
+  }
 });
 
 export default function SignUpCompany() {
@@ -225,6 +235,21 @@ export default function SignUpCompany() {
         )}
       />
       {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+
+      <Text style={styles.text}>Confirm password</Text>
+      <Controller
+        control={control}
+        name="confirmPassword"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+      />
+      {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
 
 
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
