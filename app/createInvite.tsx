@@ -37,7 +37,14 @@ const schema = z.object({
   telephone: z.string()
               .min(10, { message: "Invalid telephone number" })
               .nonempty({ message: "Telephone number is required" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  password: z.string()
+              .min(8, { message: 'Password must be at least 8 characters.' })
+              .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
+              .regex(/[0-9]/, { message: 'Contain at least one number.' })
+              .regex(/[^a-zA-Z0-9]/, {
+                message: 'Contain at least one special character.',
+              })
+              .trim(),
 });
 
 export default function SignUpCompany() {
