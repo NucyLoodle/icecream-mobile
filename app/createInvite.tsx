@@ -26,14 +26,15 @@ const schema = z.object({
   companyName: z.string()
                 .nonempty({ message: "Company name is required" })
                 .min(2, { message: "Must be at least 2 characters" }),
-  companyWebsite: z.string().optional(). or(z.literal('')), // edit to be optional
+  companyWebsite: z.string().optional().or(z.literal('')).transform((companyWebsite) => companyWebsite ? companyWebsite.toLowerCase() : companyWebsite), // edit to be optional
   companyNumber: z.string()
                 .min(8, "Please enter a valid value")
                 .optional()
                 .or(z.literal('')),
   email: z.string()
           .email({ message: "Invalid email address" })
-          .nonempty({ message: "Email is required" }),
+          .nonempty({ message: "Email is required" })
+          .transform((email) => email.toLowerCase()),
   telephone: z.string()
               .min(10, { message: "Invalid telephone number" })
               .nonempty({ message: "Telephone number is required" }),
