@@ -8,6 +8,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ title: 'Home' }} />
       <Stack.Screen name="createInvite" options={{ title: 'createInvite' }} />
       <Stack.Screen name="TrackVan" options={{ title: 'TrackVan' }} />
+      <Stack.Screen name="Verify" />
     </Stack>
   );
 }
