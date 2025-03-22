@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TextInput, Button, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRoute } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,15 +19,25 @@ const verifySchema = z.object({
 });
 
 export default function Verify() {
+    const route = useRoute();
+    const { token } = route.params as { token?: string };
+
     const {
         control,
-        handleSubmit,
+        handleSubmit,setValue,
         formState: { errors },
         } = useForm({
+            defaultValues: {token: ""},
         resolver: zodResolver(verifySchema),
         });
 
-        const onSubmit = async (data: String) => {
+        const Verify = async (data: { token: string }) => {
+
+            useEffect(() => {
+                if (token) {
+                  setValue("token", token); // Prefill the field
+                }
+              }, [token, setValue]);
 
             try {
                 const response = await fetch("https://icecream-web-one.vercel.app/api/verify", {
