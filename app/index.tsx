@@ -24,7 +24,7 @@ SplashScreen.setOptions({
 type RootStackParamList = {
   createInvite: undefined;
   TrackVan: undefined;
-  Verify: undefined;
+  Verify: { token: string | null };
 };
 
 export default function Index() {
@@ -84,10 +84,21 @@ export default function Index() {
           <Text style={styles.pressable}>Sign Up</Text>        
       </Pressable>
 
+      <Pressable
+          onPress={() => navigation.navigate('Verify', { token: inviteToken })}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? '#eee060' : '#b8ecce',
+            },
+            styles.wrapperCustom,
+          ]}>         
+          <Text style={styles.pressable}>Verify a Token</Text>        
+      </Pressable>
+
 
       <Link href="/TrackVan" style={styles.button}>Go to Track Van screen</Link>
-      <Link href="/createInvite" style={styles.button}>Sign up</Link>
-      <Link href="/Verify" style={styles.button}>Verify</Link>
+
+
       <Text>Invite Token: {inviteToken ?? "No invite token yet"}</Text>
     </View>
   );
