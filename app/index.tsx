@@ -1,7 +1,7 @@
 import './gesture-handler';
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Text, View, StyleSheet, Alert } from "react-native";
+import { Text, View, StyleSheet, Alert, Pressable } from "react-native";
 import { Link } from "expo-router";
 import {
   useFonts,
@@ -10,6 +10,7 @@ import {
 import * as SplashScreen from "expo-splash-screen";
 import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 import * as Linking from "expo-linking";
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 // Keep splash screen visible while loading resources
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +21,15 @@ SplashScreen.setOptions({
   fade: true,
 });
 
+type RootStackParamList = {
+  createInvite: undefined;
+  TrackVan: undefined;
+  Verify: undefined;
+};
+
 export default function Index() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   const [inviteToken, setInviteToken] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({
     AlfaSlabOne_400Regular,
@@ -64,7 +73,18 @@ export default function Index() {
     <View style={styles.container} onLayout={onLayoutRootView}>
       <Text style={styles.text}>Icecream Tracker</Text>
 
-      
+      <Pressable
+          onPress={() => navigation.navigate('createInvite')}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? '#eee060' : '#b8ecce',
+            },
+            styles.wrapperCustom,
+          ]}>         
+          <Text style={styles.pressable}>Sign Up</Text>        
+      </Pressable>
+
+
       <Link href="/TrackVan" style={styles.button}>Go to Track Van screen</Link>
       <Link href="/createInvite" style={styles.button}>Sign up</Link>
       <Link href="/Verify" style={styles.button}>Verify</Link>
@@ -89,4 +109,14 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: "#fff",
   },
+  pressable: {
+    fontSize: 20,
+    color: '#3e1755',
+    textAlign: 'center',
+  },
+  wrapperCustom: {
+    minWidth: 200,
+    borderRadius: 8,
+    padding: 6,   
+  }
 });
