@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, TextInput, Button, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
+import { Text, TextInput, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
