@@ -1,3 +1,5 @@
+import './gesture-handler';
+
 import React, { useCallback, useEffect, useState } from "react";
 import { Text, View, StyleSheet, Alert } from "react-native";
 import { Link } from "expo-router";
@@ -65,7 +67,7 @@ export default function Index() {
       
       <Link href="/TrackVan" style={styles.button}>Go to Track Van screen</Link>
       <Link href="/createInvite" style={styles.button}>Sign up</Link>
-      <Link href="/verify" style={styles.button}>Verify</Link>
+      <Link href="/Verify" style={styles.button}>Verify</Link>
       <Text>Invite Token: {inviteToken ?? "No invite token yet"}</Text>
     </View>
   );
