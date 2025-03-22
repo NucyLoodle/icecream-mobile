@@ -27,7 +27,7 @@ export default function Verify() {
         handleSubmit,setValue,
         formState: { errors },
         } = useForm({
-            defaultValues: {token: ""},
+            defaultValues: {token: token ?? ""}, // set the default value of the token field to the token passed from the deep link
         resolver: zodResolver(verifySchema),
         });
 
@@ -35,7 +35,7 @@ export default function Verify() {
 
             useEffect(() => {
                 if (token) {
-                  setValue("token", token); // Prefill the field
+                  setValue('token', token); // Pre-fill the token in the form field
                 }
               }, [token, setValue]);
 
@@ -67,6 +67,7 @@ export default function Verify() {
 
     return(
         <SafeAreaView style={styles.container}>
+            <Text>Invite Token: {token ?? "No invite token yet"}</Text>
             <Text style={styles.heading}>Verify Your Email</Text>
 
                 <Text style={styles.text}>Enter your token</Text>
