@@ -1,14 +1,21 @@
 import React from 'react';
 import 'expo-dev-client';
-import { Stack } from 'expo-router';
+import { createStackNavigator } from '@react-navigation/stack';
+import Index from './index';
+import createInvite from './createInvite';
+import TrackVan from './TrackVan';
+import Verify from './Verify';
+
+const Stack = createStackNavigator();
 
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'Home' }} />
-      <Stack.Screen name="createInvite" options={{ title: 'createInvite' }} />
-      <Stack.Screen name="TrackVan" options={{ title: 'TrackVan' }} />
-      <Stack.Screen name="Verify" />
-    </Stack>
+    <Stack.Navigator
+    screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" component={Index} />
+      <Stack.Screen name="createInvite" component={createInvite} />
+      <Stack.Screen name="TrackVan" component={TrackVan} />
+      <Stack.Screen name="Verify" component={Verify} />
+    </Stack.Navigator>
   );
 }
