@@ -144,6 +144,7 @@ export default function SignUpCompany() {
             onChangeText={onChange}
             value={value}
             blurOnSubmit={false}
+            textContentType="givenName"
           />
         )}
       />
@@ -163,6 +164,7 @@ export default function SignUpCompany() {
             onChangeText={onChange}
             value={value}
             blurOnSubmit={false}
+            textContentType="familyName"
           />
         )}
       />
@@ -182,6 +184,7 @@ export default function SignUpCompany() {
             onChangeText={onChange}
             value={value}
             blurOnSubmit={false}
+            textContentType="organizationName"
             
           />
         )}
@@ -203,6 +206,7 @@ export default function SignUpCompany() {
             value={value}
             autoCapitalize="none"
             blurOnSubmit={false}
+            textContentType="URL"
           />
         )}
       />
@@ -242,6 +246,7 @@ export default function SignUpCompany() {
             onChangeText={onChange}
             value={value}
             blurOnSubmit={false}
+            textContentType="emailAddress"
 
           />
         )}
@@ -262,6 +267,7 @@ export default function SignUpCompany() {
             onChangeText={onChange}
             value={value}
             blurOnSubmit={false}
+            textContentType="telephoneNumber"
           />
         )}
       />
@@ -281,6 +287,7 @@ export default function SignUpCompany() {
             onChangeText={onChange}
             value={value}
             blurOnSubmit={false}
+            textContentType="newPassword"
           />
         )}
       />
@@ -298,6 +305,7 @@ export default function SignUpCompany() {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            textContentType="newPassword"
           />
         )}
       />
