@@ -21,9 +21,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   ownerFirstName: z.string()
-                   .nonempty({ message: "Your first name is required" }),
+                   .nonempty({ message: "Your first name is required" })
+                   .min(2, { message: "Must be at least 2 characters" }),
   ownerSurname: z.string()
-                 .nonempty({ message: "Your surname is required" }),
+                 .nonempty({ message: "Your surname is required" })
+                 .min(2, { message: "Must be at least 2 characters" }),
   companyName: z.string()
                 .nonempty({ message: "Company name is required" })
                 .min(2, { message: "Must be at least 2 characters" }),
