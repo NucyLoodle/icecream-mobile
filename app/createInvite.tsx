@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Text, TextInput, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -62,6 +62,16 @@ const schema = z.object({
 });
 
 export default function SignUpCompany() {
+  const firstNameRef = useRef<TextInput>(null);
+  const lastNameRef = useRef<TextInput>(null);
+  const companyNameRef = useRef<TextInput>(null);
+  const companyWebsiteRef = useRef<TextInput>(null);
+  const companyNumberRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const telephoneRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
+
   const {
     control,
     handleSubmit,
@@ -125,10 +135,14 @@ export default function SignUpCompany() {
         name="ownerFirstName"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={firstNameRef}
+            onSubmitEditing={() => lastNameRef.current?.focus()}
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
           />
         )}
       />
@@ -140,10 +154,14 @@ export default function SignUpCompany() {
         name="ownerSurname"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={lastNameRef}
+            onSubmitEditing={() => companyNameRef.current?.focus()}
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
           />
         )}
       />
@@ -155,10 +173,15 @@ export default function SignUpCompany() {
         name="companyName"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={companyNameRef}
+            onSubmitEditing={() => companyWebsiteRef.current?.focus()}
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
+            
           />
         )}
       />
@@ -170,11 +193,15 @@ export default function SignUpCompany() {
         name="companyWebsite"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={companyWebsiteRef}
+            onSubmitEditing={() => companyNumberRef.current?.focus()}
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
+            blurOnSubmit={false}
           />
         )}
       />
@@ -187,10 +214,14 @@ export default function SignUpCompany() {
         name="companyNumber"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={companyNumberRef}
+            onSubmitEditing={() => emailRef.current?.focus()} 
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
           />
         )}
       />
@@ -202,10 +233,14 @@ export default function SignUpCompany() {
         name="email"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={emailRef}
+            onSubmitEditing={() => telephoneRef.current?.focus()} 
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
 
           />
         )}
@@ -218,10 +253,14 @@ export default function SignUpCompany() {
         name="telephone"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={telephoneRef}
+            onSubmitEditing={() => passwordRef.current?.focus()}
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
           />
         )}
       />
@@ -233,10 +272,14 @@ export default function SignUpCompany() {
         name="password"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={passwordRef}
+            onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+            returnKeyType="next"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            blurOnSubmit={false}
           />
         )}
       />
@@ -248,6 +291,8 @@ export default function SignUpCompany() {
         name="confirmPassword"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            ref={confirmPasswordRef}
+            returnKeyType="done"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
