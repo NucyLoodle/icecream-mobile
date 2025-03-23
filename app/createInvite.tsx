@@ -78,6 +78,7 @@ export default function SignUpCompany() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
+    mode: 'onChange'
   });
 
   // Function to handle form submission
