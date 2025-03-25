@@ -353,8 +353,9 @@ export default function SignUpCompany() {
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 10,
+    minWidth: 200,
     backgroundColor: "#b8ecce",
+    borderRadius: 8,
   },
   container: {
     flex: 1,
