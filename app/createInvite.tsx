@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Text, TextInput, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
+import { Text, TextInput, Alert, StyleSheet, Pressable, ScrollView, View } from "react-native";
 import { Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 // company sign up form
@@ -82,6 +83,13 @@ export default function SignUpCompany() {
   });
 
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
+
   // Function to handle form submission
   const onSubmit = async (data: any) => {
     setLoading(true);
@@ -288,6 +296,7 @@ export default function SignUpCompany() {
         control={control}
         name="password"
         render={({ field: { onChange, onBlur, value } }) => (
+          <View style={styles.inputContainer}>
           <TextInput
             ref={passwordRef}
             onSubmitEditing={() => confirmPasswordRef.current?.focus()}
@@ -299,7 +308,16 @@ export default function SignUpCompany() {
             blurOnSubmit={false}
             textContentType="newPassword"
             autoComplete="new-password"
+            secureTextEntry={!showPassword}
           />
+          <Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
+            <MaterialCommunityIcons
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#aaa"
+            />
+          </Pressable>
+          </View>
         )}
       />
       {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
@@ -309,16 +327,26 @@ export default function SignUpCompany() {
         control={control}
         name="confirmPassword"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            ref={confirmPasswordRef}
-            returnKeyType="done"
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            textContentType="newPassword"
-            autoComplete="new-password"
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={confirmPasswordRef}
+              returnKeyType="done"
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              textContentType="newPassword"
+              autoComplete="new-password"
+              secureTextEntry={!showConfirmPassword}
+            />
+          <Pressable onPress={toggleShowConfirmPassword} style={styles.iconContainer}>
+            <MaterialCommunityIcons
+              name={showConfirmPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#aaa"
+            />
+          </Pressable>
+          </View>
         )}
       />
       {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
@@ -340,9 +368,9 @@ export default function SignUpCompany() {
         loading
         disabled
         style={styles.button}
-      >
+        >
         Loading
-      </Button>
+        </Button>
       )}
       
 
@@ -352,10 +380,26 @@ export default function SignUpCompany() {
 }
 
 const styles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: 'row', // Ensure elements are in a row
+    alignItems: 'center', // Align items vertically
+    backgroundColor: '#eee060',
+    borderRadius: 10,
+    width: '100%', // Take full width of the parent
+    paddingRight: 10, // Space for the icon
+  },
+  iconContainer: {
+    // position: 'absolute',
+    // right: 10,
+    // top: '50%',
+    // transform: [{ translateY: -12 }], // Adjust to center the icon vertically
+    padding: 8,
+  },
   button: {
     minWidth: 200,
     backgroundColor: "#b8ecce",
     borderRadius: 8,
+    marginTop: 20,
   },
   container: {
     flex: 1,
@@ -369,17 +413,22 @@ const styles = StyleSheet.create({
     fontFamily: "AlfaSlabOne_400Regular",
     fontSize: 20,
   },
+  // icon: {
+  //   marginLeft: 10,
+  // },  
   text: {
     fontFamily: "Poppins_400Regular",
     color: '#3e1755'
   },
   input: {
+    flex: 1,
     height: 40,
     minWidth: 200,
     maxWidth: '100%',
     backgroundColor: '#eee060',
-    marginBottom: 10,
+    // marginBottom: 10,
     paddingHorizontal: 8,
+    // paddingRight: 40,
     fontFamily: "Poppins_400Regular",
     borderRadius: 10,
   },
@@ -392,6 +441,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
     borderRadius: 8,
     padding: 6,
+    marginTop: 20,
   },
   error: {
     fontFamily: "Poppins_400Regular",
