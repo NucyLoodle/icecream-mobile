@@ -40,7 +40,7 @@ export default function Verify() {
               }, [token, setValue]);
 
             try {
-                const response = await fetch("https://icecream-web-one.vercel.app/api/verify", {
+                const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
