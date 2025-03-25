@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Text, TextInput, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
-
+import { Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -81,8 +81,10 @@ export default function SignUpCompany() {
     mode: 'onChange'
   });
 
+  const [loading, setLoading] = useState(false);
   // Function to handle form submission
   const onSubmit = async (data: any) => {
+    setLoading(true);
     // if companyNumber is empty, set it to null
     if (!data.companyNumber) {
       data.companyNumber = null;
@@ -121,6 +123,8 @@ export default function SignUpCompany() {
           } else {
             Alert.alert("Error", error.message);
           }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -318,8 +322,9 @@ export default function SignUpCompany() {
         )}
       />
       {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword.message}</Text>}
-
-      <Pressable
+        
+      {!loading? (
+        <Pressable
           onPress={handleSubmit(onSubmit)}
           style={({pressed}) => [
             {
@@ -328,7 +333,18 @@ export default function SignUpCompany() {
             styles.wrapperCustom,
           ]}>         
           <Text style={styles.pressable}>Submit</Text>        
-      </Pressable>
+        </Pressable>
+      ) : (
+        <Button
+        mode="contained"
+        loading
+        disabled
+        style={styles.button}
+      >
+        Loading
+      </Button>
+      )}
+      
 
       </ScrollView>
     </SafeAreaView>
@@ -336,6 +352,10 @@ export default function SignUpCompany() {
 }
 
 const styles = StyleSheet.create({
+  button: {
+    marginTop: 10,
+    backgroundColor: "#b8ecce",
+  },
   container: {
     flex: 1,
     backgroundColor: "#eab2bb",
