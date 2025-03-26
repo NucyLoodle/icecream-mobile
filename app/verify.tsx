@@ -6,6 +6,18 @@ import { useRoute } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createStaticNavigation,
+  useNavigation,
+  NavigationProp,
+} from '@react-navigation/native';
+
+type RootStackParamList = {
+  index: undefined;
+  // Add other routes here if needed
+};
+
+  
 
 // user enters token, or token is passed from deep link
 // user clicks submit
@@ -32,6 +44,8 @@ export default function Verify() {
             defaultValues: {token: token ?? ""}, // set the default value of the token field to the token passed from the deep link
         resolver: zodResolver(verifySchema),
         });
+
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     
     const [loading, setLoading] = useState(false);
 
@@ -48,7 +62,7 @@ export default function Verify() {
 
     try {
 
-
+      
 
 
         // const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
@@ -64,6 +78,7 @@ export default function Verify() {
         if (response.ok) {
                 // If registration is successful, display the invite token
                 Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName} from ${result.companyName}`);
+                navigation.navigate('index')
             } else {
                 // If response is not OK, throw an error with the message returned from the API
                 throw new Error(result.error || "Failed to verify email");
