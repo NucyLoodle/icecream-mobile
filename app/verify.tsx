@@ -31,38 +31,40 @@ export default function Verify() {
         resolver: zodResolver(verifySchema),
         });
 
-        const Verify = async (data: { token: string }) => {
+  useEffect(() => {
+    console.log("Token from route params:", token);
+    if (token) {
+      setValue('token', token); // Pre-fill the token in the form field
+    }
+  }, [token, setValue]);
 
-            useEffect(() => {
-                if (token) {
-                  setValue('token', token); // Pre-fill the token in the form field
-                }
-              }, [token, setValue]);
+  const onSubmit = async (data: { token: string }) => {
+    console.log("Submitting token:", data.token); // Debugging line     
 
-            try {
-                const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-                });
-        
-                const result = await response.json();
+    try {
+        const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        });
 
-                if (response.ok) {
-                        // If registration is successful, display the invite token
-                        Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName} from ${result.companyName}`);
-                    } else {
-                        // If response is not OK, throw an error with the message returned from the API
-                        throw new Error(result.error || "Failed to verify email");
-                    }
-            } catch (error: any) {
+        const result = await response.json();
 
-                Alert.alert("Error", error.message);
-                    
+        if (response.ok) {
+                // If registration is successful, display the invite token
+                Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName} from ${result.companyName}`);
+            } else {
+                // If response is not OK, throw an error with the message returned from the API
+                throw new Error(result.error || "Failed to verify email");
             }
-        };
+    } catch (error: any) {
+
+        Alert.alert("Error", error.message);
+            
+    }
+  };
 
 
     return(
@@ -86,7 +88,10 @@ export default function Verify() {
                 {errors.token && <Text style={styles.error}>{errors.token.message}</Text>}
 
                 <Pressable
-                    onPress={handleSubmit(Verify)}
+                        onPress={() => {
+                          console.log("Submit button pressed");
+                          handleSubmit(onSubmit)();
+                      }}
                     style={({pressed}) => [
                     {
                         backgroundColor: pressed ? '#eee060' : '#b8ecce',
