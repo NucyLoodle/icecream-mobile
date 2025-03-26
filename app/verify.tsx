@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const verifySchema = z.object({
     token: z.string().nonempty(),
+    email: z.string().email().nonempty(),
 });
 
 export default function Verify() {
@@ -38,10 +39,12 @@ export default function Verify() {
     }
   }, [token, setValue]);
 
-  const onSubmit = async (data: { token: string }) => {
-    console.log("Submitting token:", data.token); // Debugging line     
+  const onSubmit = async (data: { token: string, email: string }) => {
+    console.log("Submitting token:", data); // Debugging line     
 
     try {
+
+
         const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
         method: "POST",
         headers: {
@@ -71,6 +74,21 @@ export default function Verify() {
         <SafeAreaView style={styles.container}>
             <Text>Invite Token: {token ?? "No invite token yet"}</Text>
             <Text style={styles.heading}>Verify Your Email</Text>
+
+                <Text style={styles.text}>Enter your email</Text>
+                <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                    style={styles.input}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    />
+                )}
+                />
+                {errors.token && <Text style={styles.error}>{errors.token.message}</Text>}
 
                 <Text style={styles.text}>Enter your token</Text>
                 <Controller
