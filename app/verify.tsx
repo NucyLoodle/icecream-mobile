@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { Text, TextInput, Button, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, Alert, StyleSheet, Pressable, ScrollView } from "react-native";
+import { Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -31,6 +32,8 @@ export default function Verify() {
             defaultValues: {token: token ?? ""}, // set the default value of the token field to the token passed from the deep link
         resolver: zodResolver(verifySchema),
         });
+    
+    const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log("Token from route params:", token);
@@ -40,18 +43,21 @@ export default function Verify() {
   }, [token, setValue]);
 
   const onSubmit = async (data: { token: string, email: string }) => {
+    setLoading(true);
     console.log("Submitting token:", data); // Debugging line     
 
     try {
 
 
-        const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        });
+
+
+        // const response = await fetch("https://icecream-web-one.vercel.app/api/verify-token", {
+        // method: "POST",
+        // headers: {
+        //     "Content-Type": "application/json",
+        // },
+        // body: JSON.stringify(data),
+        // });
 
         const result = await response.json();
 
@@ -62,11 +68,13 @@ export default function Verify() {
                 // If response is not OK, throw an error with the message returned from the API
                 throw new Error(result.error || "Failed to verify email");
             }
-    } catch (error: any) {
+      } catch (error: any) {
 
-        Alert.alert("Error", error.message);
-            
-    }
+          Alert.alert("Error", error.message);
+              
+      } finally {
+          setLoading(false);
+      }
   };
 
 
@@ -105,19 +113,28 @@ export default function Verify() {
                 />
                 {errors.token && <Text style={styles.error}>{errors.token.message}</Text>}
 
-                <Pressable
-                        onPress={() => {
-                          console.log("Submit button pressed");
-                          handleSubmit(onSubmit)();
-                      }}
-                    style={({pressed}) => [
-                    {
-                        backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                    },
-                    styles.wrapperCustom,
-                    ]}>         
-                    <Text style={styles.pressable}>Submit</Text>        
-                </Pressable>
+                 {!loading? (
+                        <Pressable
+                          onPress={handleSubmit(onSubmit)}
+                          style={({pressed}) => [
+                            {
+                              backgroundColor: pressed ? '#eee060' : '#b8ecce',
+                            },
+                            styles.wrapperCustom,
+                          ]}>         
+                          <Text style={styles.pressable}>Submit</Text>        
+                        </Pressable>
+                      ) : (
+                        <Button
+                        mode="contained"
+                        loading
+                        disabled
+                        style={styles.button}
+                        labelStyle={{ color: '#3e1755', fontSize: 15, fontFamily: "Poppins_400Regular" }}
+                        >
+                        Loading
+                        </Button>
+                  )}
 
 
         </SafeAreaView>
@@ -126,6 +143,12 @@ export default function Verify() {
 
 
 const styles = StyleSheet.create({
+    button: {
+      minWidth: 200,
+      backgroundColor: "#b8ecce",
+      borderRadius: 8,
+      marginTop: 20,
+    },
     container: {
       flex: 1,
       backgroundColor: "#eab2bb",
