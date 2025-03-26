@@ -112,6 +112,8 @@ export default function SignUpCompany() {
         body: JSON.stringify(data),
       });
 
+
+
       const result = await response.json();
 
       if (response.ok) {
@@ -368,6 +370,7 @@ export default function SignUpCompany() {
         loading
         disabled
         style={styles.button}
+        labelStyle={{ color: '#3e1755', fontSize: 15, fontFamily: "Poppins_400Regular" }}
         >
         Loading
         </Button>
