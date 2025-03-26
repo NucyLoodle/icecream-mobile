@@ -6,6 +6,16 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  createStaticNavigation,
+  useNavigation,
+  NavigationProp,
+} from '@react-navigation/native';
+
+type RootStackParamList = {
+  index: undefined;
+  // Add other routes here if needed
+};
 
 
 // company sign up form
@@ -72,6 +82,7 @@ export default function SignUpCompany() {
   const telephoneRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const {
     control,
@@ -104,13 +115,14 @@ export default function SignUpCompany() {
     console.log(data); //debugging statement
 
     try {
-      const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      // const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+
 
 
 
@@ -118,7 +130,8 @@ export default function SignUpCompany() {
 
       if (response.ok) {
         // If registration is successful, display the invite token
-        Alert.alert("Success", `Invite created! Token: ${result.inviteToken}`);
+        Alert.alert("Success", `Invite created! Check your email for your code.`);
+        navigation.navigate('index')
       } else {
         // If response is not OK, throw an error with the message returned from the API
         throw new Error(result.error || "Failed to create invite");
@@ -135,6 +148,7 @@ export default function SignUpCompany() {
           }
     } finally {
       setLoading(false);
+      
     }
   };
 
