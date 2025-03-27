@@ -150,8 +150,10 @@ export default function SignUpCompany() {
         throw new Error(result.error || "Failed to create invite");
       }
     } catch (error: any) {
-        if (error.message === "Pending verification" || error.message === "Unused code") {
+        if (error.message === "Unused code") {
             Alert.alert("Error", "You've already signed up. Check your email for your code.");
+          } else if (error.message === "Pending verification") {
+            Alert.alert("Error", "We are working on verifying you!")
           } else if (error.message === "Already registered") {
             Alert.alert("Error", "You've already signed up. Did you forget your password?"); //navigate to login page
           } else if (error.message === "Company needs to wait for manual verification") {
