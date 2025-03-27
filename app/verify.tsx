@@ -63,7 +63,7 @@ export default function Verify() {
     setLoading(true);
     console.log("Submitting token:", data); // Debugging line   
     
-    const apiUrl = config.SignUpAPI;
+    const apiUrl = config.LocalHostAPI;
     if (!apiUrl) {
       console.error("API URL is not defined");
       return;

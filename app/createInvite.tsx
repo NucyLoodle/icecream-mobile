@@ -115,7 +115,7 @@ export default function SignUpCompany() {
     }
     console.log(data); //debugging statement
 
-    const apiUrl = config.SignUpAPI;
+    const apiUrl = config.LocalHostAPI;
     if (!apiUrl) {
       console.error("API URL is not defined");
       return;
