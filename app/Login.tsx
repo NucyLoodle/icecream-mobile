@@ -48,49 +48,51 @@ export default function Login() {
             <Text style={styles.heading}>Login</Text>
 
             <View style ={styles.formContainer}>  
-                <Controller
-                    control={control}
-                    name="email"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        placeholder="Email"
-                        value={value}
-                        />
-                    )}
-                />
-                {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-
-                <Controller
-                    control={control}
-                    name="password"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                    <View style={styles.inputContainer}>
-                    <TextInput
-                        ref={passwordRef}
-                        returnKeyType="done"
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        blurOnSubmit={false}
-                        secureTextEntry={!showPassword}
-                        placeholder="Password"
+                <View>
+                    <Controller
+                        control={control}
+                        name="email"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            placeholder="Email"
+                            value={value}
+                            />
+                        )}
                     />
-                    <Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
-                        <MaterialCommunityIcons
-                        name={showPassword ? 'eye-off' : 'eye'}
-                        size={24}
-                        color="#aaa"
+                    {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+                </View>
+                <View>
+                    <Controller
+                        control={control}
+                        name="password"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                        <View style={styles.inputContainer}>
+                        <TextInput
+                            ref={passwordRef}
+                            returnKeyType="done"
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            blurOnSubmit={false}
+                            secureTextEntry={!showPassword}
+                            placeholder="Password"
                         />
-                    </Pressable>
-                    </View>
-                    )}
-                />
-                {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-
+                        <Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
+                            <MaterialCommunityIcons
+                            name={showPassword ? 'eye-off' : 'eye'}
+                            size={24}
+                            color="#aaa"
+                            />
+                        </Pressable>
+                        </View>
+                        )}
+                    />
+                    {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+                </View>
                 <Pressable
                     onPress={handleSubmit(Login)}
                     style={({pressed}) => [
@@ -112,7 +114,7 @@ const styles = StyleSheet.create({
         maxWidth: '100%',
         // borderColor: 'red',
         // borderWidth: 5,
-        height: '30%',
+        height: '20%',
 
         justifyContent: "space-between",
     },
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         maxWidth: '100%',
         // paddingHorizontal: 10,
-        marginBottom: 10, // Ensure consistent spacing
+        // marginBottom: 10, // Ensure consistent spacing
       },
     //   inputField: {
     //     flex: 1, // Takes up available space
@@ -172,6 +174,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins_400Regular",
         borderRadius: 10,
         textAlignVertical: "center",
+        // marginBottom: 5,
 
     },
     pressable: {
