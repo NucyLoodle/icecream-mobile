@@ -54,6 +54,9 @@ export default function Login() {
                         name="email"
                         render={({ field: { onChange, onBlur, value } }) => (
                             <TextInput
+                            ref={emailRef}
+                            onSubmitEditing={() => passwordRef.current?.focus()}
+                            returnKeyType="next"
                             style={styles.input}
                             onBlur={onBlur}
                             onChangeText={onChange}
