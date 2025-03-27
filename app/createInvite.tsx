@@ -159,6 +159,7 @@ export default function SignUpCompany() {
           } else {
             Alert.alert("Error", error.message);
           }
+    navigation.navigate('index')
     } finally {
       setLoading(false);
       
