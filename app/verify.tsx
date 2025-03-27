@@ -11,6 +11,7 @@ import {
   useNavigation,
   NavigationProp,
 } from '@react-navigation/native';
+import config from "../config";
 
 type RootStackParamList = {
   index: undefined;
@@ -56,11 +57,28 @@ export default function Verify() {
     }
   }, [token, setValue]);
 
+
+
   const onSubmit = async (data: { token: string, email: string }) => {
     setLoading(true);
-    console.log("Submitting token:", data); // Debugging line     
+    console.log("Submitting token:", data); // Debugging line   
+    
+    const apiUrl = config.SignUpAPI;
+    if (!apiUrl) {
+      console.error("API URL is not defined");
+      return;
+    }
 
     try {
+
+      console.log("API URL:", apiUrl);
+      const response = await fetch(`${apiUrl}/verify-token`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        });
 
       
 

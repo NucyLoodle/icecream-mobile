@@ -11,6 +11,7 @@ import {
   useNavigation,
   NavigationProp,
 } from '@react-navigation/native';
+import config from "../config";
 
 type RootStackParamList = {
   index: undefined;
@@ -114,6 +115,12 @@ export default function SignUpCompany() {
     }
     console.log(data); //debugging statement
 
+    const apiUrl = config.SignUpAPI;
+    if (!apiUrl) {
+      console.error("API URL is not defined");
+      return;
+    }
+
     try {
       // const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
       //   method: "POST",
@@ -123,7 +130,13 @@ export default function SignUpCompany() {
       //   body: JSON.stringify(data),
       // });
 
-
+      const response = await fetch(`${apiUrl}/sign-up-companies`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
 
       const result = await response.json();
