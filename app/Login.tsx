@@ -42,6 +42,43 @@ export default function Login() {
     
     const toggleShowPassword = () => setShowPassword(!showPassword);
 
+    const onSubmit = async (data: any) => {
+        //setLoading(true);
+        const apiUrl = config.LocalHostAPI;
+        if (!apiUrl) {
+          console.error("API URL is not defined");
+          return;
+        }
+    
+        try {
+          // const response = await fetch("https://icecream-web-one.vercel.app/api/log-in-companies", {
+          //   method: "POST",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify(data),
+          // });
+    
+          const response = await fetch(`${apiUrl}/log-in-companies`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+    
+    
+          const result = await response.json();
+        } catch (error: any) {
+            Alert.alert("Error", error.message);
+
+        // navigation.navigate('dashboard')
+        // } finally {
+        //   setLoading(false);
+          
+        }
+      };
+
     return(
         <SafeAreaView style={styles.container}>
             
@@ -97,7 +134,7 @@ export default function Login() {
                     {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
                 </View>
                 <Pressable
-                    onPress={handleSubmit(Login)}
+                    onPress={handleSubmit(onSubmit)}
                     style={({pressed}) => [
                     {
                         backgroundColor: pressed ? '#eee060' : '#b8ecce',
