@@ -42,8 +42,9 @@ export default function Login() {
     
     const toggleShowPassword = () => setShowPassword(!showPassword);
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: { email: string, password: string }) => {
         //setLoading(true);
+        console.log('submitting')
         const apiUrl = config.LocalHostAPI;
         if (!apiUrl) {
           console.error("API URL is not defined");
@@ -59,16 +60,24 @@ export default function Login() {
           //   body: JSON.stringify(data),
           // });
     
-          const response = await fetch(`${apiUrl}/log-in-companies`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-    
-    
-          const result = await response.json();
+            const response = await fetch(`${apiUrl}/log-in-companies`, {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+          
+            
+            const result = await response.json();
+            if (response.ok) {
+                Alert.alert("success")
+                console.log(result)
+            } else {
+                Alert.alert("Invalid credentials")
+            }
+            
+            
         } catch (error: any) {
             Alert.alert("Error", error.message);
 
