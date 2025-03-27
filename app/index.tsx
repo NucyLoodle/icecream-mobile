@@ -25,6 +25,7 @@ type RootStackParamList = {
   createInvite: undefined;
   TrackVan: undefined;
   Verify: { token: string | null };
+  Login: undefined,
 };
 
 export default function Index() {
@@ -93,6 +94,17 @@ export default function Index() {
             styles.wrapperCustom,
           ]}>         
           <Text style={styles.pressable}>Verify a Token</Text>        
+      </Pressable>
+
+      <Pressable
+          onPress={() => navigation.navigate('Login')}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? '#eee060' : '#b8ecce',
+            },
+            styles.wrapperCustom,
+          ]}>         
+          <Text style={styles.pressable}>Login</Text>        
       </Pressable>
 
 
