@@ -13,6 +13,7 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 import config from "../config";
+import * as SecureStore from 'expo-secure-store';
 
 type RootStackParamList = {
   index: undefined;
@@ -71,8 +72,12 @@ export default function Login() {
             
             const result = await response.json();
             if (response.ok) {
+
                 Alert.alert("success")
+                await SecureStore.setItemAsync('userToken', 'test1')
+                let resultsecure = await SecureStore.getItemAsync('userToken');
                 console.log(result)
+                alert("🔐 Here's your value 🔐 \n" + resultsecure)
             } else {
                 Alert.alert("Invalid credentials")
             }
