@@ -80,9 +80,9 @@ export default function Login() {
                 Alert.alert("success")
                 // await SecureStore.setItemAsync('userToken', 'test1')
                 await saveToken(result.token);
-                let resultsecure = await SecureStore.getItemAsync('userToken');
-                console.log(result)
-                alert("🔐 Here's your value 🔐 \n" + resultsecure)
+                // let resultsecure = await SecureStore.getItemAsync('userToken');
+                // console.log(result)
+                // alert("🔐 Here's your value 🔐 \n" + resultsecure)
             } else {
                 Alert.alert("Invalid credentials")
             }
