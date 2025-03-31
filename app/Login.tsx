@@ -25,6 +25,10 @@ const verifySchema = z.object({
     password: z.string().nonempty(),
 });
 
+async function saveToken(token: string) {
+    await SecureStore.setItemAsync("userToken", token);
+  }
+
 export default function Login() {
       const emailRef = useRef<TextInput>(null);
       const passwordRef = useRef<TextInput>(null);
@@ -74,7 +78,8 @@ export default function Login() {
             if (response.ok) {
 
                 Alert.alert("success")
-                await SecureStore.setItemAsync('userToken', 'test1')
+                // await SecureStore.setItemAsync('userToken', 'test1')
+                await saveToken(result.token);
                 let resultsecure = await SecureStore.getItemAsync('userToken');
                 console.log(result)
                 alert("🔐 Here's your value 🔐 \n" + resultsecure)
