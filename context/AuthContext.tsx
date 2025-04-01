@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import React, { ReactNode, createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
@@ -7,10 +7,19 @@ interface AuthContextType {
     isAuthenticated: boolean;
     login: (data: { email: string; password: string }) => Promise<void>;
     logout: () => void;
+    loading: boolean;
 }
 
 async function saveToken(token: string) {
     await SecureStore.setItemAsync("userToken", token);
+}
+
+async function getToken() {
+  return await SecureStore.getItemAsync("userToken");
+}
+
+async function removeToken() {
+  await SecureStore.deleteItemAsync("userToken");
 }
 
 
@@ -18,7 +27,22 @@ async function saveToken(token: string) {
 const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+
+    // **Check authentication status on app load**
+    useEffect(() => {
+      const checkAuth = async () => {
+        const token = await getToken();
+        if (token) {
+          setIsAuthenticated(true);
+        }
+        setLoading(false); // Stop loading once auth check is done
+      };
+      checkAuth();
+    }, []);
+
 
   // Login function (Redirect to Home)
   const login = async (data: { email: string, password: string }) => {
@@ -69,12 +93,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   // Logout function (Redirect to Auth Screen)
-  const logout = () => {
+  const logout = async () => {
+    await removeToken();
     setIsAuthenticated(false);
-    router.replace("/Login"); //  Redirect to login screen
+    router.replace("/(public)/Home"); //  Redirect to home screen
   };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
