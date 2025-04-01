@@ -15,10 +15,6 @@ const verifySchema = z.object({
     password: z.string().nonempty(),
 });
 
-async function saveToken(token: string) {
-    await SecureStore.setItemAsync("userToken", token);
-}
-
 export default function Login() {
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
