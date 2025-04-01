@@ -8,8 +8,8 @@ export default function AuthLayout() {
     const { isAuthenticated } = useAuth();
     
     if (!isAuthenticated) {
-        console.log("Redirecting to /Login")
-        return <Redirect href="/Login" />
+        console.log("Redirecting to /home")
+        return <Redirect href="/(public)/Home" />
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
