@@ -15,6 +15,7 @@ export default function PublicLayout() {
           <Stack.Screen name="Login" options={{headerShown: false}}/>
           <Stack.Screen name="createInvite" options={{headerShown: false}}/>
           <Stack.Screen name="Verify" options={{headerShown: false}}/>
+          <Stack.Screen name="Home" options={{headerShown: false}}/>
         </Stack>;
 }
 
