@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, Alert, StyleSheet, Pressable } from "react-native";
+import { View, Text, Alert, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import * as Linking from "expo-linking"
 
@@ -41,71 +41,79 @@ export default function Home() {
   return (
 
     <View style={styles.container} >
-          <Text style={styles.text}>Icecream Tracker</Text>
-    
-          <Pressable
-            onPress={() => router.push("/(public)/createInvite")}
-            style={({pressed}) => [
-              {
-                backgroundColor: pressed ? '#eee060' : '#b8ecce',
-              },
-              styles.wrapperCustom,
-            ]}>         
-            <Text style={styles.pressable}>Sign Up</Text>        
-          </Pressable>
-    
-          <Pressable
-            onPress={() => router.push({pathname: "/(public)/Verify", params: inviteToken ? { token: inviteToken } : undefined})}
-            style={({pressed}) => [
-              {
-                backgroundColor: pressed ? '#eee060' : '#b8ecce',
-              },
-              styles.wrapperCustom,
-            ]}>         
-            <Text style={styles.pressable}>Verify a Token</Text>        
-          </Pressable>
-    
-          <Pressable
-            onPress={() => router.push("/(public)/Login")}
-            style={({pressed}) => [
-              {
-                backgroundColor: pressed ? '#eee060' : '#b8ecce',
-              },
-              styles.wrapperCustom,
-            ]}>         
-            <Text style={styles.pressable}>Login</Text>        
-          </Pressable>
-    
-          <Text>Invite Token: {inviteToken ?? "No invite token yet"}</Text>
-        </View>
+		<Text style={styles.header}>Icecream Tracker</Text>
+			<View style={styles.wrapper}>
+				<Pressable
+					onPress={() => router.push("/(public)/createInvite")}
+					style={({pressed}) => [
+						{
+						backgroundColor: pressed ? '#eee060' : '#b8ecce',
+						},
+						styles.wrapperCustom,
+					]}>         
+					<Text style={styles.pressable}>Sign Up</Text>        
+				</Pressable>
+
+				<Pressable
+					onPress={() => router.push({pathname: "/(public)/Verify", params: inviteToken ? { token: inviteToken } : undefined})}
+					style={({pressed}) => [
+						{
+						backgroundColor: pressed ? '#eee060' : '#b8ecce',
+						},
+						styles.wrapperCustom,
+					]}>         
+					<Text style={styles.pressable}>Verify a Token</Text>        
+				</Pressable>
+
+				<Pressable
+					onPress={() => router.push("/(public)/Login")}
+					style={({pressed}) => [
+						{
+						backgroundColor: pressed ? '#eee060' : '#b8ecce',
+						},
+						styles.wrapperCustom,
+					]}>         
+					<Text style={styles.pressable}>Login</Text>        
+				</Pressable>
+			</View>
+		<Text>Invite Token: {inviteToken ?? "No invite token yet"}</Text>
+    </View>
   );
 }
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#eab2bb",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  text: {
-    color: "#3c6ca8",
-    fontFamily: "AlfaSlabOne_400Regular",
-  },
-  button: {
-    fontSize: 20,
-    textDecorationLine: "underline",
-    color: "#fff",
-  },
-  pressable: {
-    fontSize: 20,
-    color: '#3e1755',
-    textAlign: 'center',
-  },
-  wrapperCustom: {
-    minWidth: 200,
-    borderRadius: 8,
-    padding: 6,   
-  }
+	container: {
+		flex: 1,
+		// borderColor: "blue",
+		// borderWidth: 3,
+		backgroundColor: "#eab2bb",
+		alignItems: "center",
+		justifyContent: "space-between",
+	},
+	text: {
+		color: "#3c6ca8",
+		fontFamily: "AlfaSlabOne_400Regular",
+	},
+	header: {
+		color: "#3c6ca8",
+		fontFamily: "AlfaSlabOne_400Regular",
+		fontSize: 30,
+	},
+	pressable: {
+		fontSize: 20,
+		color: '#3e1755',
+		textAlign: 'center',
+	},
+	wrapperCustom: {
+		minWidth: 200,
+		borderRadius: 8,
+		padding: 6,   
+	},
+	wrapper: {
+		// borderColor: "red",
+		// borderWidth: 3,
+		height: 250,
+		justifyContent: "space-between",
+	}
 });
