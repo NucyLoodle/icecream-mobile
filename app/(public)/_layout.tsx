@@ -11,6 +11,10 @@ export default function PublicLayout() {
     return <Redirect href="/(auth)/(tabs)" />; // Redirect logged-in users
   }
 
-  return <Stack />;
+  return <Stack>
+          <Stack.Screen name="Login" options={{headerShown: false}}/>
+          <Stack.Screen name="createInvite" options={{headerShown: false}}/>
+          <Stack.Screen name="Verify" options={{headerShown: false}}/>
+        </Stack>;
 }
 
