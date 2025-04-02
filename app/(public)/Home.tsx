@@ -55,7 +55,7 @@ export default function Home() {
           </Pressable>
     
           <Pressable
-            onPress={() => router.push("/(public)/Verify")}
+            onPress={() => router.push({pathname: "/(public)/Verify", params: inviteToken ? { token: inviteToken } : undefined})}
             style={({pressed}) => [
               {
                 backgroundColor: pressed ? '#eee060' : '#b8ecce',
