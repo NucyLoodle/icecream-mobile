@@ -26,77 +26,99 @@ export default function Login() {
     resolver: zodResolver(verifySchema),
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  
+  const [showPassword, setShowPassword] = useState(false);  
   const toggleShowPassword = () => setShowPassword(!showPassword);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    try {
+      await login(data);
+    } catch (error: any) {
+        console.log("there should be an alert")
+      Alert.alert("Login failed", "Please check your credentials and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-      <SafeAreaView style={styles.container}>
-          
-          <Text style={styles.heading}>Login</Text>
+    <SafeAreaView style={styles.container}>    
+        <Text style={styles.heading}>Login</Text>
 
-          <View style ={styles.formContainer}>  
-              <View>
-                  <Controller
-                      control={control}
-                      name="email"
-                      render={({ field: { onChange, onBlur, value } }) => (
-                          <TextInput
-                          ref={emailRef}
-                          onSubmitEditing={() => passwordRef.current?.focus()}
-                          returnKeyType="next"
-                          style={styles.input}
-                          onBlur={onBlur}
-                          onChangeText={onChange}
-                          placeholder="Email"
-                          value={value}
-                          />
-                      )}
-                  />
-                  {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-              </View>
-              <View>
-                  <Controller
-                      control={control}
-                      name="password"
-                      render={({ field: { onChange, onBlur, value } }) => (
-                      <View style={styles.inputContainer}>
-                      <TextInput
-                          ref={passwordRef}
-                          returnKeyType="done"
-                          style={styles.input}
-                          onBlur={onBlur}
-                          onChangeText={onChange}
-                          value={value}
-                          blurOnSubmit={false}
-                          secureTextEntry={!showPassword}
-                          placeholder="Password"
-                      />
-                      <Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
-                          <MaterialCommunityIcons
-                          name={showPassword ? 'eye-off' : 'eye'}
-                          size={24}
-                          color="#aaa"
-                          />
-                      </Pressable>
-                      </View>
-                      )}
-                  />
-                  {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-              </View>
-              <Pressable
-                  // onPress={handleSubmit(onSubmit)}
-                  onPress={handleSubmit(login)}
-                  style={({pressed}) => [
-                  {
-                      backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                  },
-                  styles.wrapperCustom,
-                  ]}>         
-                  <Text style={styles.pressable}>Login</Text>        
-              </Pressable>
-          </View>
-      </SafeAreaView>
+        <View style ={styles.formContainer}>  
+            <View>
+                <Controller
+                    control={control}
+                    name="email"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                        ref={emailRef}
+                        onSubmitEditing={() => passwordRef.current?.focus()}
+                        returnKeyType="next"
+                        style={styles.input}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        placeholder="Email"
+                        value={value}
+                        />
+                    )}
+                />
+                {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+            </View>
+            <View>
+                <Controller
+                    control={control}
+                    name="password"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                    <View style={styles.inputContainer}>
+                    <TextInput
+                        ref={passwordRef}
+                        returnKeyType="done"
+                        style={styles.input}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        blurOnSubmit={false}
+                        secureTextEntry={!showPassword}
+                        placeholder="Password"
+                    />
+                    <Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
+                        <MaterialCommunityIcons
+                        name={showPassword ? 'eye-off' : 'eye'}
+                        size={24}
+                        color="#aaa"
+                        />
+                    </Pressable>
+                    </View>
+                    )}
+                />
+                {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+            </View>
+            {!loading? (
+                <Pressable
+                    onPress={handleSubmit(onSubmit)} 
+                    style={({pressed}) => [
+                        {
+                        backgroundColor: pressed ? '#eee060' : '#b8ecce',
+                        },
+                        styles.wrapperCustom,
+                    ]}>         
+                    <Text style={styles.pressable}>Submit</Text>        
+                </Pressable>
+			) : (
+                <Button
+                    mode="contained"
+                    loading
+                    disabled
+                    style={styles.button}
+                    labelStyle={{ color: '#3e1755', fontSize: 15, fontFamily: "Poppins_400Regular" }}
+                >
+                    Loading
+                </Button>
+			)}
+        </View>
+    </SafeAreaView>
   );
 }
 
@@ -135,7 +157,6 @@ const styles = StyleSheet.create({
         minWidth: 200,
         backgroundColor: "#b8ecce",
         borderRadius: 8,
-        marginTop: 20,
     },
     container: {
         // borderColor: 'blue',
