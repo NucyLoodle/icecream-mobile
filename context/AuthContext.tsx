@@ -10,16 +10,21 @@ interface AuthContextType {
     loading: boolean;
 }
 
-async function saveToken(token: string) {
+async function saveUserDetails(token: string, ownerFirstName: string, ownerSurname: string) {
     await SecureStore.setItemAsync("userToken", token);
+	await SecureStore.setItemAsync("firstName", ownerFirstName);
+	await SecureStore.setItemAsync("surname", ownerSurname)
 }
+
 
 async function getToken() {
   return await SecureStore.getItemAsync("userToken");
 }
 
-async function removeToken() {
+async function removeUserDetails() {
   await SecureStore.deleteItemAsync("userToken");
+  await SecureStore.deleteItemAsync("firstName");
+  await SecureStore.deleteItemAsync("surname");
 }
 
 
@@ -69,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			});
 			const result = await response.json();
 				if (response.ok) {
-					await saveToken(result.token);
+					await saveUserDetails(result.token, result.ownerFirstName, result.ownerSurname);
 					setIsAuthenticated(true);
 					router.replace("/(auth)/(tabs)"); // Redirect to home tab
 				} else {
@@ -85,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Logout function (Redirect to Auth Screen)
 	const logout = async () => {
-		await removeToken();
+		await removeUserDetails();
 		setIsAuthenticated(false);
 		router.replace("/(public)/Home"); //  Redirect to home screen
 	};
