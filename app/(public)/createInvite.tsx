@@ -134,6 +134,7 @@ export default function SignUpCompany() {
 
 			if (response.ok) {
 				Alert.alert("Success", `Invite created! Check your email for your code.`);
+
 			} else {
 				// If response is not OK, throw an error with the message returned from the API
 				throw new Error(result.error || "Failed to create invite");
@@ -150,9 +151,10 @@ export default function SignUpCompany() {
 			} else {
 				Alert.alert("Error", error.message);
 			}
-			router.push("/(public)/Home")
+			
 		} finally {
 		setLoading(false);	
+		router.push("/(public)/Home")
 		}
 	};
 
