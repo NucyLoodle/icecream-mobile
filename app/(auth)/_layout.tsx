@@ -14,7 +14,8 @@ export default function AuthLayout() {
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="create" options={{ title: "Create something" }} />
+            <Stack.Screen name="viewVans" options={{ title: "View your Vans" }} />
+            <Stack.Screen name="viewDrivers" options={{ title: "View your Drivers" }} />
         </Stack>
 
     )
