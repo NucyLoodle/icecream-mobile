@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from "@/context/AuthContext";
 
 const verifySchema = z.object({
-    email: z.string().email().nonempty(),
+    email: z.string().email().nonempty().transform((val) => val.toLowerCase()),
     password: z.string().nonempty(),
 });
 
