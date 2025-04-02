@@ -20,8 +20,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 // user returned to home screen and is logged in
 
 const verifySchema = z.object({
-    token: z.string().nonempty().transform((val) => val.toLowerCase()),
-    email: z.string().email().nonempty(),
+    token: z.string().nonempty(),
+    email: z.string().email().nonempty().transform((val) => val.toLowerCase()),
 });
 
 export default function Verify() {
