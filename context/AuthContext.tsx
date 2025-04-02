@@ -26,34 +26,30 @@ async function removeToken() {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const router = useRouter();
 
 
     // **Check authentication status on app load**
     useEffect(() => {
-      const checkAuth = async () => {
-        const token = await getToken();
-        if (token) {
-          setIsAuthenticated(true);
-        }
-        setLoading(false); // Stop loading once auth check is done
-      };
-      checkAuth();
+		const checkAuth = async () => {
+			const token = await getToken();
+			if (token) {
+				setIsAuthenticated(true);
+			}
+			setLoading(false);
+		};
+		checkAuth();
     }, []);
 
 
   // Login function (Redirect to Home)
-  const login = async (data: { email: string, password: string }) => {
-
-    // login logic
-
-    console.log('submitting')
+  	const login = async (data: { email: string, password: string }) => {
         const apiUrl = config.LocalHostAPI;
         if (!apiUrl) {
-          console.error("API URL is not defined");
-          return;
+			console.error("API URL is not defined");
+			return;
         }
     
         try {
@@ -64,53 +60,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           //   },
           //   body: JSON.stringify(data),
           // });
-          const response = await fetch(`${apiUrl}/log-in-companies`, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-          const result = await response.json();
-            if (response.ok) {
-                await saveToken(result.token);
-                setIsAuthenticated(true);
-                router.replace("/(auth)/(tabs)"); // Redirect to home tab
-            } else {
-                console.log("Invalid credentials")
-            }
-          
-          
-      } catch (error: any) {
-          console.log("Error", error.message);    
-      }
-
-
-
-
-  };
+			const response = await fetch(`${apiUrl}/log-in-companies`, {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+			const result = await response.json();
+				if (response.ok) {
+					await saveToken(result.token);
+					setIsAuthenticated(true);
+					router.replace("/(auth)/(tabs)"); // Redirect to home tab
+				} else {
+					throw new Error(result.message || "Invalid credentials")
+				}         
+		} catch (error: any) {
+			console.log("Error", error.message);
+			throw error    
+		}
+  	};
 
 
 
   // Logout function (Redirect to Auth Screen)
-  const logout = async () => {
-    await removeToken();
-    setIsAuthenticated(false);
-    router.replace("/(public)/Home"); //  Redirect to home screen
-  };
+	const logout = async () => {
+		await removeToken();
+		setIsAuthenticated(false);
+		router.replace("/(public)/Home"); //  Redirect to home screen
+	};
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+	return (
+		<AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+			{children}
+		</AuthContext.Provider>
+	);
 };
 
 //  Hook to use authentication state
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+	const context = useContext(AuthContext);
+	if (!context) {
+		throw new Error("useAuth must be used within an AuthProvider");
+	}
+	return context;
 };
