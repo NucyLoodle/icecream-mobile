@@ -28,8 +28,8 @@ export default function Index() {
     >
       <Text>Welcome {name}!</Text>
       <Text>What would you like to do today?</Text>
-      <Link href="/(auth)/create">View Vans</Link>
-      <Link href="/(auth)/create">View Drivers</Link>
+      <Link href="/(auth)/viewVans">View Vans</Link>
+      <Link href="/(auth)/viewDrivers">View Drivers</Link>
       <Link href="/(auth)/TrackVan">Share My Location</Link>
       <Pressable onPress={logout}><Text>Logout</Text></Pressable>
     </View>
