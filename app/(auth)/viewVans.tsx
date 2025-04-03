@@ -5,58 +5,66 @@ import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
 
 export default function ViewVans() {
-  const [vans, setVans] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [id, setId] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingVan, setEditingVan] = useState<any | null>(null);
-  const [editedNickname, setEditedNickname] = useState<string>('');
-  const [editedReg, setEditedReg] = useState<string>('');
+	const [vans, setVans] = useState<any[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [id, setId] = useState<string | null>(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editingVan, setEditingVan] = useState<any | null>(null);
+	const [editedNickname, setEditedNickname] = useState<string>('');
+	const [editedReg, setEditedReg] = useState<string>('');
+	const [isDeleting, setIsDeleting] = useState(false);
 
-  const apiUrl = config.LocalHostAPI;
+	const apiUrl = config.LocalHostAPI;
 
-  useEffect(() => {
-    async function getCompanyId() {
-		const storedId = await SecureStore.getItemAsync("companyId");
-		setId(storedId); 
-    }
-    getCompanyId();
-  }, []); // Only run once when the component mounts
-
-  useEffect(() => {
-    if (id && apiUrl) {
-		const fetchVans = async () => {
-			try {
-				console.log("submitting company id", id);
-				const response = await fetch(`${apiUrl}/view-vans`, {
-					method: "POST",
-					headers: {
-					"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ companyId: id }),
-				});
-
-				const data: any[] = await response.json();
-				setVans(data); // Store vans data after fetching
-			} catch (error) {
-				console.error("Error fetching vans:", error);
-			} finally {
-				setLoading(false); // Stop loading state after fetching
-			}
-		};
-
-      	fetchVans();
-		} else {
-			console.log("Waiting for companyId...");
+	useEffect(() => {
+		async function getCompanyId() {
+			const storedId = await SecureStore.getItemAsync("companyId");
+			setId(storedId); 
 		}
-	}, [id, apiUrl]); // Fetch vans only when companyId and apiUrl are available
+		getCompanyId();
+	}, []); // Only run once when the component mounts
+
+	useEffect(() => {
+		if (id && apiUrl) {
+			const fetchVans = async () => {
+				try {
+					console.log("submitting company id", id);
+					const response = await fetch(`${apiUrl}/view-vans`, {
+						method: "POST",
+						headers: {
+						"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ companyId: id }),
+					});
+
+					const data: any[] = await response.json();
+					setVans(data); // Store vans data after fetching
+					console.log(typeof(vans))
+				} catch (error) {
+					console.error("Error fetching vans:", error);
+				} finally {
+					setLoading(false); // Stop loading state after fetching
+				}
+			};
+
+			fetchVans();
+			} else {
+				console.log("Waiting for companyId...");
+			}
+		}, [id, apiUrl]); // Fetch vans only when companyId and apiUrl are available
 
 	const handleEdit = (van: any) => {
-		setEditingVan(van); // Set the selected van as the one being edited
-		setEditedNickname(van.van_nickname); // Set the current nickname to the editable state
-		setEditedReg(van.van_reg); // Set the current registration to the editable state
-		setIsEditing(true); // Show the edit view
+		setEditingVan(van); 
+		setEditedNickname(van.van_nickname); 
+		setEditedReg(van.van_reg);
+		setIsEditing(true); 
 	};
+
+	const handleDelete = (van: any) => {
+		setEditingVan(van);
+		setIsDeleting(true);
+		setEditedNickname(van.van_nickname)
+	}
 
 	const handleSave = async () => {
 		// Send the update to the backend
@@ -94,7 +102,37 @@ export default function ViewVans() {
 	const handleClose = () => {
 		setIsEditing(false); // Close the edit view without saving
 		setEditingVan(null); // Clear the editing van
+		setIsDeleting(false);
 	};
+
+	const handleConfirmDelete = async () => {
+		// Send the update to the backend
+		try {
+			const response = await fetch(`${apiUrl}/delete-van`, {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+				vanId: editingVan.van_id,
+				}),
+			});
+
+			if (response.ok) {
+				const updatedVans = vans.filter(el => el.van_id !== editingVan.van_id);
+
+				setVans(updatedVans);
+				setIsEditing(false); // Close the edit mode
+				setEditingVan(null); // Clear the editing van
+				setIsDeleting(false);
+			} else {
+				console.error("Error saving van details");
+			}
+		} catch (error) {
+			console.error("Error updating van:", error);
+		}
+
+	}
 
 	return (
 		<View style={styles.container}>
@@ -111,7 +149,7 @@ export default function ViewVans() {
 					<TouchableOpacity onPress={() => handleEdit(item)}>
 						<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
 					</TouchableOpacity>
-					<TouchableOpacity onPress={() => console.log("Delete", item.van_id)}>
+					<TouchableOpacity onPress={() => handleDelete(item)}>
 						<FontAwesome5 name="trash" size={20} color="#da8558" style={styles.icon} />
 					</TouchableOpacity>
 					</View>
@@ -138,6 +176,22 @@ export default function ViewVans() {
 					</TouchableOpacity>
 					<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
 						<Text style={styles.closeText}>Close</Text>
+					</TouchableOpacity>
+					</View>
+				</View>
+				</View>
+			</Modal>
+
+			<Modal visible={isDeleting} animationType="slide" transparent={true}>
+				<View style={styles.modalBackground}>
+				<View style={styles.modalContent}>
+					<Text>Are you sure you want to delete {editedNickname}?</Text>
+					<View style={styles.modalButtons}>
+					<TouchableOpacity onPress={handleConfirmDelete} style={styles.saveButton}>
+						<Text style={styles.saveText}>Delete</Text>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+						<Text style={styles.closeText}>Cancel</Text>
 					</TouchableOpacity>
 					</View>
 				</View>
