@@ -1,53 +1,100 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Pressable, } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
 
 export default function ViewVans() {
-	const [vans, setVans] = useState<any[]>([]); 
-	const [loading, setLoading] = useState<boolean>(true); 
-	const [id, setId] = useState<string | null>(null);
-  
-	const apiUrl = config.LocalHostAPI; 
-  
-	
-	useEffect(() => {
-		async function getCompanyId() {
-			const storedId = await SecureStore.getItemAsync("companyId");
-			setId(storedId); // Store the company ID after fetching
-		}
-		getCompanyId();
-	}, []); // Only run once when the component mounts
+  const [vans, setVans] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [id, setId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingVan, setEditingVan] = useState<any | null>(null);
+  const [editedNickname, setEditedNickname] = useState<string>('');
+  const [editedReg, setEditedReg] = useState<string>('');
 
-	useEffect(() => {
-		if (id && apiUrl) {
-			const fetchVans = async () => {
-				try {
-					console.log("submitting company id", id);
-					const response = await fetch(`${apiUrl}/view-vans`, {
-						method: "POST",
-						headers: {
-						"Content-Type": "application/json",
-						},
-						body: JSON.stringify({ companyId: id }),
-					});
+  const apiUrl = config.LocalHostAPI;
 
-					const data: any[] = await response.json();
-					console.log("Vans Data:", data);
-					setVans(data); 
-				} catch (error) {
-					console.error("Error fetching vans:", error);
-				} finally {
-					setLoading(false); 
-				}
-			};
+  useEffect(() => {
+    async function getCompanyId() {
+		const storedId = await SecureStore.getItemAsync("companyId");
+		setId(storedId); 
+    }
+    getCompanyId();
+  }, []); // Only run once when the component mounts
 
-			fetchVans();
+  useEffect(() => {
+    if (id && apiUrl) {
+		const fetchVans = async () => {
+			try {
+				console.log("submitting company id", id);
+				const response = await fetch(`${apiUrl}/view-vans`, {
+					method: "POST",
+					headers: {
+					"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ companyId: id }),
+				});
+
+				const data: any[] = await response.json();
+				setVans(data); // Store vans data after fetching
+			} catch (error) {
+				console.error("Error fetching vans:", error);
+			} finally {
+				setLoading(false); // Stop loading state after fetching
+			}
+		};
+
+      	fetchVans();
 		} else {
 			console.log("Waiting for companyId...");
 		}
 	}, [id, apiUrl]); // Fetch vans only when companyId and apiUrl are available
+
+	const handleEdit = (van: any) => {
+		setEditingVan(van); // Set the selected van as the one being edited
+		setEditedNickname(van.van_nickname); // Set the current nickname to the editable state
+		setEditedReg(van.van_reg); // Set the current registration to the editable state
+		setIsEditing(true); // Show the edit view
+	};
+
+	const handleSave = async () => {
+		// Send the update to the backend
+		try {
+			const response = await fetch(`${apiUrl}/update-van`, {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+				vanId: editingVan.van_id,
+				vanNickname: editedNickname,
+				vanReg: editedReg,
+				}),
+			});
+
+			if (response.ok) {
+				// Update the vans list with the new values
+				const updatedVans = vans.map(van =>
+				van.van_id === editingVan.van_id
+					? { ...van, van_nickname: editedNickname, van_reg: editedReg }
+					: van
+				);
+				setVans(updatedVans);
+				setIsEditing(false); // Close the edit mode
+				setEditingVan(null); // Clear the editing van
+			} else {
+				console.error("Error saving van details");
+			}
+		} catch (error) {
+			console.error("Error updating van:", error);
+		}
+	};
+
+	const handleClose = () => {
+		setIsEditing(false); // Close the edit view without saving
+		setEditingVan(null); // Clear the editing van
+	};
 
 	return (
 		<View style={styles.container}>
@@ -61,7 +108,7 @@ export default function ViewVans() {
 					<Text style={styles.regPlateText}>{item.van_reg}</Text>
 					</View>
 					<View style={styles.iconContainer}>
-					<TouchableOpacity onPress={() => console.log("Edit", item.van_id)}>
+					<TouchableOpacity onPress={() => handleEdit(item)}>
 						<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
 					</TouchableOpacity>
 					<TouchableOpacity onPress={() => console.log("Delete", item.van_id)}>
@@ -70,16 +117,43 @@ export default function ViewVans() {
 					</View>
 				</View>
 				))}
-			</View>			
+			</View>
+
+			<Modal visible={isEditing} animationType="slide" transparent={true}>
+				<View style={styles.modalBackground}>
+				<View style={styles.modalContent}>
+					<TextInput
+					style={styles.input}
+					value={editedNickname}
+					onChangeText={setEditedNickname}
+					/>
+					<TextInput
+					style={styles.input}
+					value={editedReg}
+					onChangeText={setEditedReg}
+					/>
+					<View style={styles.modalButtons}>
+					<TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+						<Text style={styles.saveText}>Save</Text>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+						<Text style={styles.closeText}>Close</Text>
+					</TouchableOpacity>
+					</View>
+				</View>
+				</View>
+			</Modal>
+
 			<Pressable
 				onPress={() => console.log("Pressed")}
-				style={({pressed}) => [
-					{
+				style={({ pressed }) => [
+				{
 					backgroundColor: pressed ? '#eee060' : '#b8ecce',
-					},
-					styles.wrapperCustom,
-				]}>         
-				<Text style={styles.pressable}>Add Van</Text>        
+				},
+				styles.wrapperCustom,
+				]}
+			>
+				<Text style={styles.pressable}>Add Van</Text>
 			</Pressable>
 		</View>
 	);
@@ -92,14 +166,13 @@ const styles = StyleSheet.create({
 		backgroundColor: "#eab2bb",
 	},
 	heading: {
-		fontFamily:"AlfaSlabOne_400Regular",
 		fontSize: 22,
 		fontWeight: "bold",
 		marginBottom: 20,
 		textAlign: "center",
 	},
 	vanCard: {
-		width: '40%', 
+		width: '40%',
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "white",
@@ -113,8 +186,7 @@ const styles = StyleSheet.create({
 		elevation: 3,
 	},
 	vanNickname: {
-		// fontFamily: "Poppins_400Regular",
-		fontFamily:"AlfaSlabOne_400Regular",
+		fontFamily: "AlfaSlabOne_400Regular",
 		fontSize: 16,
 		fontWeight: "bold",
 		marginBottom: 5,
@@ -147,7 +219,7 @@ const styles = StyleSheet.create({
 	gridContainer: {
 		flexDirection: "row",
 		flexWrap: "wrap",
-		justifyContent: "space-evenly",
+		justifyContent: "space-between",
 	},
 	pressable: {
 		fontSize: 20,
@@ -160,5 +232,47 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		padding: 6,
 		marginTop: 20,
+	},
+	modalBackground: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+	},
+	modalContent: {
+		backgroundColor: "white",
+		padding: 20,
+		borderRadius: 10,
+		width: 300,
+	},
+	input: {
+		height: 40,
+		borderColor: "#ccc",
+		borderWidth: 1,
+		borderRadius: 5,
+		marginBottom: 10,
+		paddingLeft: 10,
+	},
+	modalButtons: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+	},
+	saveButton: {
+		backgroundColor: "#3e1755",
+		padding: 10,
+		borderRadius: 5,
+	},
+	closeButton: {
+		backgroundColor: "#da8558",
+		padding: 10,
+		borderRadius: 5,
+	},
+	saveText: {
+		color: "#fff",
+		fontWeight: "bold",
+	},
+	closeText: {
+		color: "#fff",
+		fontWeight: "bold",
 	},
 });
