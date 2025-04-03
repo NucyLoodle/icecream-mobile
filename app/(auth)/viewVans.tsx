@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function ViewVans() {
@@ -29,7 +29,17 @@ export default function ViewVans() {
 					</View>
 				</View>
 				))}
-			</View>
+			</View>			
+			<Pressable
+				onPress={() => console.log("Pressed")}
+				style={({pressed}) => [
+					{
+					backgroundColor: pressed ? '#eee060' : '#b8ecce',
+					},
+					styles.wrapperCustom,
+				]}>         
+				<Text style={styles.pressable}>Add Van</Text>        
+			</Pressable>
 		</View>
 	);
 }
@@ -96,5 +106,17 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		flexWrap: "wrap",
 		justifyContent: "space-evenly",
+	},
+	pressable: {
+		fontSize: 20,
+		color: '#3e1755',
+		textAlign: 'center',
+		fontFamily: "Poppins_400Regular",
+	},
+	wrapperCustom: {
+		minWidth: 200,
+		borderRadius: 8,
+		padding: 6,
+		marginTop: 20,
 	},
 });
