@@ -10,10 +10,11 @@ interface AuthContextType {
     loading: boolean;
 }
 
-async function saveUserDetails(token: string, ownerFirstName: string, ownerSurname: string) {
+async function saveUserDetails(token: string, ownerFirstName: string, ownerSurname: string, companyId: string) {
     await SecureStore.setItemAsync("userToken", token);
 	await SecureStore.setItemAsync("firstName", ownerFirstName);
 	await SecureStore.setItemAsync("surname", ownerSurname)
+	await SecureStore.setItemAsync("companyId", companyId)
 }
 
 
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			});
 			const result = await response.json();
 				if (response.ok) {
-					await saveUserDetails(result.token, result.ownerFirstName, result.ownerSurname);
+					await saveUserDetails(result.token, result.ownerFirstName, result.ownerSurname, result.companyId);
 					setIsAuthenticated(true);
 					router.replace("/(auth)/(tabs)"); // Redirect to home tab
 				} else {
