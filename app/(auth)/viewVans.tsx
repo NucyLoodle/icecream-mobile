@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function ViewVans() {
@@ -11,28 +11,25 @@ export default function ViewVans() {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.heading}>View Your Vans</Text>
-			<FlatList
-				data={vans}
-				numColumns={2}
-				keyExtractor={(item) => item.van_id.toString()}
-				renderItem={({ item }) => (
-					<View style={styles.vanCard}>
-						<Text style={styles.vanNickname}>{item.van_nickname}</Text>
-						<FontAwesome5 name="truck" size={40} color="black" />
-						<View style={styles.regPlate}>
-							<Text style={styles.regPlateText}>{item.van_reg}</Text>
-						</View>
-						<View style={styles.iconContainer}>
-							<TouchableOpacity onPress={() => console.log("Edit", item.van_id)}>
-								<FontAwesome5 name="edit" size={20} color="blue" style={styles.icon} />
-							</TouchableOpacity>
-							<TouchableOpacity onPress={() => console.log("Delete", item.van_id)}>
-								<FontAwesome5 name="trash" size={20} color="red" style={styles.icon} />
-							</TouchableOpacity>
-						</View>
+			<View style={styles.gridContainer}>
+				{vans.map((item) => (
+				<View key={item.van_id} style={styles.vanCard}>
+					<Text style={styles.vanNickname}>{item.van_nickname}</Text>
+					<FontAwesome5 name="truck" size={40} color="#b8ecce" />
+					<View style={styles.regPlate}>
+					<Text style={styles.regPlateText}>{item.van_reg}</Text>
 					</View>
-				)}
-			/>
+					<View style={styles.iconContainer}>
+					<TouchableOpacity onPress={() => console.log("Edit", item.van_id)}>
+						<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
+					</TouchableOpacity>
+					<TouchableOpacity onPress={() => console.log("Delete", item.van_id)}>
+						<FontAwesome5 name="trash" size={20} color="#da8558" style={styles.icon} />
+					</TouchableOpacity>
+					</View>
+				</View>
+				))}
+			</View>
 		</View>
 	);
 }
@@ -41,7 +38,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 20,
-		backgroundColor: "#f8f9fa",
+		backgroundColor: "#eab2bb",
 	},
 	heading: {
 		fontSize: 22,
@@ -64,11 +61,13 @@ const styles = StyleSheet.create({
 		elevation: 3,
 	},
 	vanNickname: {
+		// fontFamily: "Poppins_400Regular",
+		fontFamily:"AlfaSlabOne_400Regular",
 		fontSize: 16,
 		fontWeight: "bold",
 		marginBottom: 5,
 		textAlign: "center",
-		color: "#333",
+		color: "#3c6ca8",
 	},
 	regPlate: {
 		marginTop: 10,
@@ -92,5 +91,10 @@ const styles = StyleSheet.create({
 	},
 	icon: {
 		marginHorizontal: 10,
+	},
+	gridContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-evenly",
 	},
 });
