@@ -1,6 +1,8 @@
-import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Pressable } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable, } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import config from "@/config";
+import * as SecureStore from 'expo-secure-store';
 
 export default function ViewVans() {
 	const vans = [
@@ -8,9 +10,65 @@ export default function ViewVans() {
 		{ van_id: 2, van_reg: "GH67 4FG", van_nickname: "Chilly Wheels" }
 	];
 
+	// const [vans, setVans] = useState<any[]>([]); 
+	const [loading, setLoading] = useState<boolean>(true); 
+	const [id, setId] = useState<string | null>(null);
+  
+	const apiUrl = config.LocalHostAPI; // Get API URL from config
+  
+ // Depend on apiUrl to re-run if it changes (although unlikely)
+  
+	useEffect(() => {
+	  async function getCompanyId() {
+		const storedId = await SecureStore.getItemAsync("companyId");
+		setId(storedId);
+	  }
+	  getCompanyId();
+	}, []); // Only run once when the component mounts
+  
+	if (loading) {
+	  return (
+		<View style={styles.container}>
+		  <Text>Loading vans...</Text>
+		</View>
+	  );
+	}
+
+	useEffect(() => {
+		// Ensure the API URL is valid before making requests
+		if (!apiUrl) {
+		  console.error("API URL is not defined");
+		  setLoading(false); // Set loading to false to prevent a stuck loading state
+		  return;
+		}
+	
+	const fetchVans = async () => {
+		try {	  
+			const response = await fetch(`${apiUrl}/view-vans`, {
+			method: "POST",
+			headers: {
+			"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ companyId: id }),
+		});
+
+		
+		const data: any[] = await response.json();
+		// setVans(data); 
+		} catch (error) {
+			console.error("Error fetching vans:", error);
+		} finally {
+			setLoading(false); 
+		}
+	};
+	
+		fetchVans(); 
+	}, [apiUrl]);
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.heading}>View Your Vans</Text>
+			<Text>{id}</Text>
 			<View style={styles.gridContainer}>
 				{vans.map((item) => (
 				<View key={item.van_id} style={styles.vanCard}>
