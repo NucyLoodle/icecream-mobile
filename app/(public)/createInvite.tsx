@@ -457,6 +457,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		color: '#3e1755',
 		textAlign: 'center',
+		fontFamily: "Poppins_400Regular",
 	},
 	wrapperCustom: {
 		minWidth: 200,
