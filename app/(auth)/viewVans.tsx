@@ -52,7 +52,6 @@ export default function ViewVans() {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.heading}>View Your Vans</Text>
-			<Text>{id}</Text>
 			<View style={styles.gridContainer}>
 				{vans.map((item) => (
 				<View key={item.van_id} style={styles.vanCard}>
@@ -93,6 +92,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#eab2bb",
 	},
 	heading: {
+		fontFamily:"AlfaSlabOne_400Regular",
 		fontSize: 22,
 		fontWeight: "bold",
 		marginBottom: 20,
