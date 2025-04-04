@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal }
 import { FontAwesome5 } from "@expo/vector-icons";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
+import { useRouter } from "expo-router";
 
 export default function ViewVans() {
 	const [vans, setVans] = useState<any[]>([]);
@@ -13,6 +14,8 @@ export default function ViewVans() {
 	const [editedNickname, setEditedNickname] = useState<string>('');
 	const [editedReg, setEditedReg] = useState<string>('');
 	const [isDeleting, setIsDeleting] = useState(false);
+
+	const router = useRouter();
 
 	const apiUrl = config.LocalHostAPI;
 
@@ -198,8 +201,10 @@ export default function ViewVans() {
 				</View>
 			</Modal>
 
+
+
 			<Pressable
-				onPress={() => console.log("Pressed")}
+				onPress={() => router.push("/(auth)/addVans")}
 				style={({ pressed }) => [
 				{
 					backgroundColor: pressed ? '#eee060' : '#b8ecce',
