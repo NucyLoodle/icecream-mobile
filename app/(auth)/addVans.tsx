@@ -50,7 +50,7 @@ export default function AddVans() {
 		if (!data.vanNickname) {
 			data.vanNickname = null;
 		}
-		console.log(data); //debugging statement
+		// console.log(data); //debugging statement
 
 		if (!apiUrl) {
 			console.error("API URL is not defined");
@@ -72,7 +72,7 @@ export default function AddVans() {
 				"Content-Type": "application/json",
 				},
                 body: JSON.stringify({
-                    data,
+                    ...data,
                     companyId: id,
                 }),
 			});
