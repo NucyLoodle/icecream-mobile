@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
@@ -138,83 +139,87 @@ export default function ViewVans() {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.heading}>View Your Vans</Text>
-			<View style={styles.gridContainer}>
-				{vans.map((item) => (
-				<View key={item.van_id} style={styles.vanCard}>
-					<Text style={styles.vanNickname}>{item.van_nickname}</Text>
-					<FontAwesome5 name="truck" size={40} color="#b8ecce" />
-					<View style={styles.regPlate}>
-					<Text style={styles.regPlateText}>{item.van_reg}</Text>
+		<SafeAreaView style={styles.container}>
+			<ScrollView>
+				<Text style={styles.heading}>View Your Vans</Text>
+				<View style={styles.gridContainer}>
+					{vans.map((item) => (
+					<View key={item.van_id} style={styles.vanCard}>
+						<Text style={styles.vanNickname}>{item.van_nickname}</Text>
+						<FontAwesome5 name="truck" size={40} color="#b8ecce" />
+						<View style={styles.regPlate}>
+						<Text style={styles.regPlateText}>{item.van_reg}</Text>
+						</View>
+						<View style={styles.iconContainer}>
+						<TouchableOpacity onPress={() => handleEdit(item)}>
+							<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => handleDelete(item)}>
+							<FontAwesome5 name="trash" size={20} color="#da8558" style={styles.icon} />
+						</TouchableOpacity>
+						</View>
 					</View>
-					<View style={styles.iconContainer}>
-					<TouchableOpacity onPress={() => handleEdit(item)}>
-						<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
-					</TouchableOpacity>
-					<TouchableOpacity onPress={() => handleDelete(item)}>
-						<FontAwesome5 name="trash" size={20} color="#da8558" style={styles.icon} />
-					</TouchableOpacity>
+					))}
+				</View>
+				
+
+				<Modal visible={isEditing} animationType="slide" transparent={true}>
+					<View style={styles.modalBackground}>
+					<View style={styles.modalContent}>
+						<TextInput
+						style={styles.input}
+						value={editedNickname}
+						onChangeText={setEditedNickname}
+						/>
+						<TextInput
+						style={styles.input}
+						value={editedReg}
+						onChangeText={setEditedReg}
+						/>
+						<View style={styles.modalButtons}>
+						<TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+							<Text style={styles.saveText}>Save</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+							<Text style={styles.closeText}>Close</Text>
+						</TouchableOpacity>
+						</View>
 					</View>
-				</View>
-				))}
-			</View>
-
-			<Modal visible={isEditing} animationType="slide" transparent={true}>
-				<View style={styles.modalBackground}>
-				<View style={styles.modalContent}>
-					<TextInput
-					style={styles.input}
-					value={editedNickname}
-					onChangeText={setEditedNickname}
-					/>
-					<TextInput
-					style={styles.input}
-					value={editedReg}
-					onChangeText={setEditedReg}
-					/>
-					<View style={styles.modalButtons}>
-					<TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-						<Text style={styles.saveText}>Save</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-						<Text style={styles.closeText}>Close</Text>
-					</TouchableOpacity>
 					</View>
-				</View>
-				</View>
-			</Modal>
+				</Modal>
 
-			<Modal visible={isDeleting} animationType="slide" transparent={true}>
-				<View style={styles.modalBackground}>
-				<View style={styles.modalContent}>
-					<Text>Are you sure you want to delete {editedNickname}?</Text>
-					<View style={styles.modalButtons}>
-					<TouchableOpacity onPress={handleConfirmDelete} style={styles.saveButton}>
-						<Text style={styles.saveText}>Delete</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-						<Text style={styles.closeText}>Cancel</Text>
-					</TouchableOpacity>
+				<Modal visible={isDeleting} animationType="slide" transparent={true}>
+					<View style={styles.modalBackground}>
+					<View style={styles.modalContent}>
+						<Text>Are you sure you want to delete {editedNickname}?</Text>
+						<View style={styles.modalButtons}>
+						<TouchableOpacity onPress={handleConfirmDelete} style={styles.saveButton}>
+							<Text style={styles.saveText}>Delete</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+							<Text style={styles.closeText}>Cancel</Text>
+						</TouchableOpacity>
+						</View>
 					</View>
-				</View>
-				</View>
-			</Modal>
+					</View>
+				</Modal>
 
 
 
-			<Pressable
-				onPress={() => router.push("/(auth)/addVans")}
-				style={({ pressed }) => [
-				{
-					backgroundColor: pressed ? '#eee060' : '#b8ecce',
-				},
-				styles.wrapperCustom,
-				]}
-			>
-				<Text style={styles.pressable}>Add Van</Text>
-			</Pressable>
-		</View>
+				<Pressable
+					onPress={() => router.push("/(auth)/addVans")}
+					style={({ pressed }) => [
+					{
+						backgroundColor: pressed ? '#eee060' : '#b8ecce',
+					},
+					styles.wrapperCustom,
+					]}
+				>
+					<Text style={styles.pressable}>Add Van</Text>
+				</Pressable>
+
+			</ScrollView>
+		</SafeAreaView>
 	);
 }
 
