@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Text, View, StyleSheet, Pressable, TextInput } from "react-native";
+import { Text, View, StyleSheet, Pressable, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
@@ -90,7 +90,10 @@ export default function AddVans() {
 			}
 
 		} catch (error: any) {
-			console.log("error")
+			if (error.message === "Already registered") {
+				console.log("already registered")
+				Alert.alert("Error", "This van is already registered"); 
+			}
 			
 		} finally {
 		    setLoading(false);	
