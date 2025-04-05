@@ -59,7 +59,6 @@ export default function ViewVans() {
 		if (id && apiUrl) {
 			const fetchVans = async () => {
 				try {
-					console.log("submitting company id", id);
 					const response = await fetch(`${apiUrl}/view-vans`, {
 						method: "POST",
 						headers: {
@@ -70,7 +69,6 @@ export default function ViewVans() {
 
 					const data: any[] = await response.json();
 					setVans(data); // Store vans data after fetching
-					console.log(typeof(vans))
 				} catch (error) {
 					console.error("Error fetching vans:", error);
 				} finally {
@@ -136,7 +134,6 @@ export default function ViewVans() {
 
 		} catch (error: any) {
 			if (error.message === "Already registered") {
-				console.log("already registered")
 				Alert.alert("Error", "This van is already registered"); 
 			}
 		}
