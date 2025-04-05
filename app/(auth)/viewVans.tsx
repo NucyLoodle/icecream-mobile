@@ -1,10 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
 import { useRouter } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
+
+const schema = z.object({
+	vanReg: z.string()
+					.nonempty({ message: "Van registration required" })
+					.min(2, { message: "Must be at least 2 characters" }),
+	vanNickname: z.string()
+					.optional(),
+});
+
+
 
 export default function ViewVans() {
 	const [vans, setVans] = useState<any[]>([]);
@@ -13,8 +28,20 @@ export default function ViewVans() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editingVan, setEditingVan] = useState<any | null>(null);
 	const [editedNickname, setEditedNickname] = useState<string>('');
-	const [editedReg, setEditedReg] = useState<string>('');
 	const [isDeleting, setIsDeleting] = useState(false);
+
+	const vanRegRef = useRef<TextInput>(null);
+	const vanNicknameRef = useRef<TextInput>(null);
+
+	const {
+		control,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	  } = useForm({
+		resolver: zodResolver(schema),
+		mode: 'onChange',
+	  });
 
 	const router = useRouter();
 
@@ -57,12 +84,15 @@ export default function ViewVans() {
 			}
 		}, [id, apiUrl]); // Fetch vans only when companyId and apiUrl are available
 
+
 	const handleEdit = (van: any) => {
-		setEditingVan(van); 
-		setEditedNickname(van.van_nickname); 
-		setEditedReg(van.van_reg);
-		setIsEditing(true); 
-	};
+		setEditingVan(van);
+		reset({
+		  vanReg: van.van_reg,
+		  vanNickname: van.van_nickname || '',
+		});
+		setIsEditing(true);
+	  };
 
 	const handleDelete = (van: any) => {
 		setEditingVan(van);
@@ -70,39 +100,39 @@ export default function ViewVans() {
 		setEditedNickname(van.van_nickname)
 	}
 
-	const handleSave = async () => {
-		// Send the update to the backend
+
+	const onSubmit = async (data: any) => {
 		try {
-			const response = await fetch(`${apiUrl}/update-van`, {
-				method: "POST",
-				headers: {
-				"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-				vanId: editingVan.van_id,
-				vanNickname: editedNickname,
-				vanReg: editedReg,
-				}),
-			});
-
-			if (response.ok) {
-				// Update the vans list with the new values
-				const updatedVans = vans.map(van =>
-				van.van_id === editingVan.van_id
-					? { ...van, van_nickname: editedNickname, van_reg: editedReg }
-					: van
-				);
-				setVans(updatedVans);
-				setIsEditing(false); // Close the edit mode
-				setEditingVan(null); // Clear the editing van
-			} else {
-				console.error("Error saving van details");
-			}
+		  const response = await fetch(`${apiUrl}/update-van`, {
+			method: "POST",
+			headers: {
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+			  vanId: editingVan.van_id,
+			  vanNickname: data.vanNickname,
+			  vanReg: data.vanReg,
+			}),
+		  });
+	  
+		  if (response.ok) {
+			const updatedVans = vans.map(van =>
+			  van.van_id === editingVan.van_id
+				? { ...van, van_nickname: data.vanNickname, van_reg: data.vanReg }
+				: van
+			);
+			setVans(updatedVans);
+			setIsEditing(false);
+			setEditingVan(null);
+		  } else {
+			console.error("Error saving van details");
+		  }
 		} catch (error) {
-			console.error("Error updating van:", error);
+		  console.error("Error updating van:", error);
 		}
-	};
+	  };
 
+	  
 	const handleClose = () => {
 		setIsEditing(false); // Close the edit view without saving
 		setEditingVan(null); // Clear the editing van
@@ -163,7 +193,7 @@ export default function ViewVans() {
 				</View>
 				
 
-				<Modal visible={isEditing} animationType="slide" transparent={true}>
+				{/* <Modal visible={isEditing} animationType="slide" transparent={true}>
 					<View style={styles.modalBackground}>
 					<View style={styles.modalContent}>
 						<TextInput
@@ -176,6 +206,7 @@ export default function ViewVans() {
 						value={editedReg}
 						onChangeText={setEditedReg}
 						/>
+						
 						<View style={styles.modalButtons}>
 						<TouchableOpacity onPress={handleSave} style={styles.saveButton}>
 							<Text style={styles.saveText}>Save</Text>
@@ -186,7 +217,60 @@ export default function ViewVans() {
 						</View>
 					</View>
 					</View>
-				</Modal>
+				</Modal> */}
+
+<Modal visible={isEditing} animationType="slide" transparent={true}>
+  <View style={styles.modalBackground}>
+    <View style={styles.modalContent}>
+      <Text style={styles.text}>Van Registration Plate</Text>
+      <Controller
+        control={control}
+        name="vanReg"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            ref={vanRegRef}
+            onSubmitEditing={() => vanNicknameRef.current?.focus()}
+            returnKeyType="next"
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            blurOnSubmit={false}
+          />
+        )}
+      />
+      {errors.vanReg && <Text style={styles.error}>{errors.vanReg.message}</Text>}
+
+      <Text style={styles.text}>Van Nickname</Text>
+      <Controller
+        control={control}
+        name="vanNickname"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            ref={vanNicknameRef}
+            returnKeyType="done"
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            blurOnSubmit={false}
+          />
+        )}
+      />
+      {errors.vanNickname && <Text style={styles.error}>{errors.vanNickname.message}</Text>}
+
+      <View style={styles.modalButtons}>
+        <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.saveButton}>
+          <Text style={styles.saveText}>Save</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+          <Text style={styles.closeText}>Close</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
 
 				<Modal visible={isDeleting} animationType="slide" transparent={true}>
 					<View style={styles.modalBackground}>
@@ -339,4 +423,10 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontWeight: "bold",
 	},
+	error: {
+
+	},
+	text: {
+
+	}
 });
