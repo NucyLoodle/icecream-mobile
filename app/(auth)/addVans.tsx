@@ -81,7 +81,10 @@ export default function AddVans() {
 
 			if (response.ok) {
 				console.log("success")
-                router.push("/(auth)/viewVans")
+				router.replace("/(auth)/(tabs)");
+                setTimeout(() => {
+                router.push("/(auth)/viewVans");
+                }, 100); 
 			} else {
 				throw new Error(result.error || "Failed to add van");
 			}
