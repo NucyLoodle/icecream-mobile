@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal, ScrollView } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import config from "@/config";
@@ -102,35 +102,45 @@ export default function ViewVans() {
 
 
 	const onSubmit = async (data: any) => {
+		if (data.vanNickname === editingVan.van_nickname && data.vanReg === editingVan.van_reg) {
+			Alert.alert("No changes detected", "Please make some changes before saving.");
+			return; 
+		}
 		try {
-		  const response = await fetch(`${apiUrl}/update-van`, {
-			method: "POST",
-			headers: {
-			  "Content-Type": "application/json",
+			const response = await fetch(`${apiUrl}/update-van`, {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-			  vanId: editingVan.van_id,
-			  vanNickname: data.vanNickname,
-			  vanReg: data.vanReg,
+				vanId: editingVan.van_id,
+				vanNickname: data.vanNickname,
+				vanReg: data.vanReg,
 			}),
 		  });
+
+		  	const result = await response.json();
 	  
-		  if (response.ok) {
-			const updatedVans = vans.map(van =>
-			  van.van_id === editingVan.van_id
-				? { ...van, van_nickname: data.vanNickname, van_reg: data.vanReg }
-				: van
-			);
-			setVans(updatedVans);
-			setIsEditing(false);
-			setEditingVan(null);
-		  } else {
-			console.error("Error saving van details");
-		  }
-		} catch (error) {
-		  console.error("Error updating van:", error);
+			if (response.ok) {
+				const updatedVans = vans.map(van =>
+				van.van_id === editingVan.van_id
+					? { ...van, van_nickname: data.vanNickname, van_reg: data.vanReg }
+					: van
+				);
+				setVans(updatedVans);
+				setIsEditing(false);
+				setEditingVan(null);
+			} else {
+				throw new Error(result.error || "Failed to add van");
+			}
+
+		} catch (error: any) {
+			if (error.message === "Already registered") {
+				console.log("already registered")
+				Alert.alert("Error", "This van is already registered"); 
+			}
 		}
-	  };
+	};
 
 	  
 	const handleClose = () => {
@@ -193,83 +203,57 @@ export default function ViewVans() {
 				</View>
 				
 
-				{/* <Modal visible={isEditing} animationType="slide" transparent={true}>
-					<View style={styles.modalBackground}>
+				<Modal visible={isEditing} animationType="slide" transparent={true}>
+				<View style={styles.modalBackground}>
 					<View style={styles.modalContent}>
+					<Text style={styles.text}>Van Registration Plate</Text>
+					<Controller
+						control={control}
+						name="vanReg"
+						render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
-						style={styles.input}
-						value={editedNickname}
-						onChangeText={setEditedNickname}
+							ref={vanRegRef}
+							onSubmitEditing={() => vanNicknameRef.current?.focus()}
+							returnKeyType="next"
+							style={styles.input}
+							onBlur={onBlur}
+							onChangeText={onChange}
+							value={value}
+							blurOnSubmit={false}
 						/>
+						)}
+					/>
+					{errors.vanReg && <Text style={styles.error}>{errors.vanReg.message}</Text>}
+
+					<Text style={styles.text}>Van Nickname</Text>
+					<Controller
+						control={control}
+						name="vanNickname"
+						render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
-						style={styles.input}
-						value={editedReg}
-						onChangeText={setEditedReg}
+							ref={vanNicknameRef}
+							returnKeyType="done"
+							style={styles.input}
+							onBlur={onBlur}
+							onChangeText={onChange}
+							value={value}
+							blurOnSubmit={false}
 						/>
-						
-						<View style={styles.modalButtons}>
-						<TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-							<Text style={styles.saveText}>Save</Text>
+						)}
+					/>
+					{errors.vanNickname && <Text style={styles.error}>{errors.vanNickname.message}</Text>}
+
+					<View style={styles.modalButtons}>
+						<TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.saveButton}>
+						<Text style={styles.saveText}>Save</Text>
 						</TouchableOpacity>
 						<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-							<Text style={styles.closeText}>Close</Text>
+						<Text style={styles.closeText}>Close</Text>
 						</TouchableOpacity>
-						</View>
 					</View>
 					</View>
-				</Modal> */}
-
-<Modal visible={isEditing} animationType="slide" transparent={true}>
-  <View style={styles.modalBackground}>
-    <View style={styles.modalContent}>
-      <Text style={styles.text}>Van Registration Plate</Text>
-      <Controller
-        control={control}
-        name="vanReg"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            ref={vanRegRef}
-            onSubmitEditing={() => vanNicknameRef.current?.focus()}
-            returnKeyType="next"
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            blurOnSubmit={false}
-          />
-        )}
-      />
-      {errors.vanReg && <Text style={styles.error}>{errors.vanReg.message}</Text>}
-
-      <Text style={styles.text}>Van Nickname</Text>
-      <Controller
-        control={control}
-        name="vanNickname"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            ref={vanNicknameRef}
-            returnKeyType="done"
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            blurOnSubmit={false}
-          />
-        )}
-      />
-      {errors.vanNickname && <Text style={styles.error}>{errors.vanNickname.message}</Text>}
-
-      <View style={styles.modalButtons}>
-        <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.saveButton}>
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-          <Text style={styles.closeText}>Close</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </View>
-</Modal>
+				</View>
+				</Modal>
 
 
 				<Modal visible={isDeleting} animationType="slide" transparent={true}>
