@@ -75,7 +75,17 @@ export default function ViewDrivers() {
 						body: JSON.stringify({ companyId: id }),
 					});
 
-					const data: any[] = await response.json();
+					const rawData: any[] = await response.json();
+          const data = rawData.map(driver => ({
+            driverId: driver.driver_id,
+            firstName: driver.driver_first_name,
+            lastName: driver.driver_last_name,
+            companyId: driver.company_id,
+            email: driver.email,
+            role: driver.role,
+            isActive: driver.is_active,
+          }));
+          console.log(data)
 					setDrivers(data); 
 				} catch (error) {
 					console.error("Error fetching drivers:", error);
@@ -114,15 +124,15 @@ export default function ViewDrivers() {
 			return; 
 		}
 		try {
-			const response = await fetch(`${apiUrl}/update-driver`, {
+			const response = await fetch(`${apiUrl}/update-drivers`, {
 				method: "POST",
 				headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				driverId: editingDriver.driverId,
-        firstName: editingDriver.firstName,
-        lastName: editingDriver.lastName,
+				driver_id: editingDriver.driverId,
+        driver_first_name: editingDriver.firstName,
+        driver_last_name: editingDriver.lastName,
         email: editingDriver.email,
 			}),
 		  });
@@ -139,7 +149,8 @@ export default function ViewDrivers() {
 				setIsEditing(false);
 				setEditingDriver(null);
 			} else {
-				throw new Error(result.error || "Failed to add driver");
+        console.log("error on frontend")
+				throw new Error(result.error || "Failed to update driver");
 			}
 
 		} catch (error: any) {
@@ -195,7 +206,7 @@ export default function ViewDrivers() {
             <Text style={styles.driverDetails}>{item.lastName}</Text>
 						<FontAwesome5 name="user-circle" size={40} color="#b8ecce" />
 						<Text style={styles.driverDetails}>{item.email}</Text>
-            <Text style={styles.driverDetails}>Active? {item.isActive}</Text>
+            <Text style={styles.driverDetails}>Validated account? {item.isActive ? 'Yes' : 'No'}</Text>
 
 						<View style={styles.iconContainer}>
 						<TouchableOpacity onPress={() => handleEdit(item)}>
