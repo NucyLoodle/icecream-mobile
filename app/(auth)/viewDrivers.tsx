@@ -115,6 +115,8 @@ export default function ViewDrivers() {
 		setEditingDriver(driver);
 		setIsDeleting(true);
 		setEditedEmail(driver.email)
+    setEditedFirstName(driver.firstName);
+    setEditedLastName(driver.lastName); 
 	}
 
 
@@ -130,10 +132,9 @@ export default function ViewDrivers() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				driver_id: editingDriver.driverId,
-        driver_first_name: editingDriver.firstName,
-        driver_last_name: editingDriver.lastName,
-        email: editingDriver.email,
+        driver_id: editingDriver.driverId,
+        company_id: id,
+        ...data
 			}),
 		  });
 
@@ -179,7 +180,7 @@ export default function ViewDrivers() {
 			});
 
 			if (response.ok) {
-				const updatedDrivers = drivers.filter(el => el.van_id !== editingDriver.driverId);
+				const updatedDrivers = drivers.filter(el => el.driverId !== editingDriver.driverId);
 
 				setDrivers(updatedDrivers);
 				setIsEditing(false); // Close the edit mode
