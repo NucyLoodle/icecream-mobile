@@ -312,7 +312,7 @@ export default function ViewDrivers() {
 
 
 				<Pressable
-					// onPress={() => router.push("/(auth)/addDrivers")}
+					onPress={() => router.push("/(auth)/addDrivers")}
 					style={({ pressed }) => [
 					{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',
