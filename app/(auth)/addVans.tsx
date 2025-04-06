@@ -119,8 +119,6 @@ export default function AddVans() {
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
-                    textContentType="givenName"
-                    autoComplete="given-name"
                 />
                 )}
             />
@@ -140,8 +138,6 @@ export default function AddVans() {
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
-                    textContentType="emailAddress"
-                    autoComplete="email"
 
                 />
                 )}
