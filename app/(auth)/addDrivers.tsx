@@ -141,8 +141,8 @@ export default function AddDrivers() {
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
-                    // textContentType="familyname"
-                    // autoComplete="email"
+                    textContentType="familyName"
+                    autoComplete="family-name"
 
                 />
                 )}
