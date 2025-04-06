@@ -149,7 +149,6 @@ export default function ViewDrivers() {
 				setIsEditing(false);
 				setEditingDriver(null);
 			} else {
-        console.log("error on frontend")
 				throw new Error(result.error || "Failed to update driver");
 			}
 
@@ -187,10 +186,10 @@ export default function ViewDrivers() {
 				setEditingDriver(null); // Clear the editing van
 				setIsDeleting(false);
 			} else {
-				console.error("Error saving driver details");
+				console.error("Error deleting driver details");
 			}
 		} catch (error) {
-			console.error("Error updating driver:", error);
+			console.error("Error deleting driver:", error);
 		}
 
 	}
