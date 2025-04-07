@@ -57,12 +57,18 @@ export default function Profile() {
 			<Text style={styles.heading}>Your Details</Text>
 			<View>
 
-				<Text style={styles.text}>Company Name: {companyName}</Text>
-				<Text style={styles.text}>First Name: {firstName} </Text>
-				<Text style={styles.text}>Last Name: {lastName}</Text>
-				<Text style={styles.text}>Company Website: {url}</Text>
-				<Text style={styles.text}>Contact Email: {email}</Text>
-				<Text style={styles.text}>Contact Phone: {phone}</Text>
+				<Text style={styles.text}>Company Name: </Text>
+				<Text style={styles.info}>{companyName}</Text>
+				<Text style={styles.text}>First Name:</Text>
+				<Text style={styles.info}>{firstName}</Text>
+				<Text style={styles.text}>Last Name:</Text>
+				<Text style={styles.info}>{lastName}</Text>
+				<Text style={styles.text}>Company Website:</Text>
+				<Text style={styles.info}>{url}</Text>
+				<Text style={styles.text}>Contact Email:</Text>
+				<Text style={styles.info}>{email}</Text>
+				<Text style={styles.text}>Contact Phone:</Text>
+				<Text style={styles.info}>{phone}</Text>
 			</View>
 			<Text style={styles.text}>Contact us to update your info</Text>
 		</SafeAreaView>
@@ -74,18 +80,24 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#eab2bb",
-		alignItems: "center",
-		justifyContent: "center",
+		alignItems: "flex-start",
+		justifyContent: "space-between",
 		padding: 5,
 	},
 	heading: {
 		color: "#3c6ca8",
 		fontFamily: "AlfaSlabOne_400Regular",
-		fontSize: 20,
+		fontSize: 30,
 	},
 	text: {
 		fontFamily: "Poppins_400Regular",
 		color: '#3e1755',
 		fontSize: 20,
+	},
+	info: {
+		fontFamily: "Poppins_400Regular",
+		color: '#3c6ca8',
+		fontSize: 20,
+		backgroundColor: '#eee060'
 	},
 });
