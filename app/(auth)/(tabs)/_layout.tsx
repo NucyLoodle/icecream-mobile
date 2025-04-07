@@ -8,19 +8,21 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                title: "Home",
-                tabBarIcon: ({ color, size }) => (
-                    <FontAwesome name="home" size={size} color={color} />
-                ),
+                    headerShown: false,
+                    title: "Home",
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome name="home" size={size} color={color} />
+                    ),
                 }}
             />
             <Tabs.Screen
                 name="profile"
                 options={{
-                title: "Profile",
-                tabBarIcon: ({ color, size }) => (
-                    <FontAwesome name="gear" size={size} color={color} />
-                ),
+                    headerShown: false,
+                    title: "Profile",
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome name="gear" size={size} color={color} />
+                    ),
                 }}
             />
         </Tabs>
