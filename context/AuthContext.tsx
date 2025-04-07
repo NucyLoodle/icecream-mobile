@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const logout = async () => {
 		await removeUserDetails();
 		setIsAuthenticated(false);
-		router.replace("/(public)/Home"); //  Redirect to home screen
+		router.replace("/(publicSupplier)/Home"); //  Redirect to home screen
 	};
 
 	return (

@@ -85,7 +85,7 @@ export default function Verify() {
         if (response.ok) {
                 // If registration is successful, display the invite token
                 Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName} from ${result.companyName}`);
-                router.push("/(public)/Login")
+                router.push("/(publicSupplier)/Login")
             } else {
                 // If response is not OK, throw an error with the message returned from the API
                 throw new Error(result.error || "Failed to verify email");

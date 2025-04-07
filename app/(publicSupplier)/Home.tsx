@@ -19,7 +19,7 @@ export default function Home() {
 
         // Navigate to the verify screen and pass the token
         router.push({
-          pathname: "/(public)/Verify",
+          pathname: "/(publicSupplier)/Verify",
           params: { token }, // Pass token as query param
         });
       }
@@ -44,7 +44,7 @@ export default function Home() {
 		<Text style={styles.header}>Icecream Tracker</Text>
 			<View style={styles.wrapper}>
 				<Pressable
-					onPress={() => router.push("/(public)/createInvite")}
+					onPress={() => router.push("/(publicSupplier)/createInvite")}
 					style={({pressed}) => [
 						{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',
@@ -55,7 +55,7 @@ export default function Home() {
 				</Pressable>
 
 				<Pressable
-					onPress={() => router.push({pathname: "/(public)/Verify", params: inviteToken ? { token: inviteToken } : undefined})}
+					onPress={() => router.push({pathname: "/(publicSupplier)/Verify", params: inviteToken ? { token: inviteToken } : undefined})}
 					style={({pressed}) => [
 						{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',
@@ -66,7 +66,7 @@ export default function Home() {
 				</Pressable>
 
 				<Pressable
-					onPress={() => router.push("/(public)/Login")}
+					onPress={() => router.push("/(publicSupplier)/Login")}
 					style={({pressed}) => [
 						{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',

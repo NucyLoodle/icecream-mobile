@@ -154,7 +154,7 @@ export default function SignUpCompany() {
 			
 		} finally {
 		setLoading(false);	
-		router.push("/(public)/Home")
+		router.push("/(publicSupplier)/Home")
 		}
 	};
 

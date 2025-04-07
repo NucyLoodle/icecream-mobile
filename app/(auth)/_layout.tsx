@@ -9,7 +9,7 @@ export default function AuthLayout() {
     
     if (!isAuthenticated) {
         console.log("Redirecting to /home")
-        return <Redirect href="/(public)/Home" />
+        return <Redirect href="/(publicSupplier)/Home" />
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
