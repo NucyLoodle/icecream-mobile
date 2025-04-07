@@ -77,30 +77,30 @@ export default function Index() {
 };
 
 const styles = StyleSheet.create({
-  container: {
+	container: {
 		flex: 1,
 		backgroundColor: "#eab2bb",
 		alignItems: "center",
 		justifyContent: "space-around",
 		padding: 5,
 	},
-  heading: {
+	heading: {
 		color: "#3c6ca8",
 		fontFamily: "AlfaSlabOne_400Regular",
 		fontSize: 20,
 	},
-  text: {
+	text: {
 		fontFamily: "Poppins_400Regular",
 		color: '#3e1755',
 		fontSize: 20,
 	},
-  pressable: {
+	pressable: {
 		fontSize: 20,
 		color: '#3e1755',
 		textAlign: 'center',
 		fontFamily: "Poppins_400Regular",
 	},
-  wrapperCustom: {
+	wrapperCustom: {
 		minWidth: 200,
 		borderRadius: 8,
 		padding: 6,
