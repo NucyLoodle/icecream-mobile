@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Alert, StyleSheet, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as Linking from "expo-linking"
 
@@ -40,9 +41,9 @@ export default function Home() {
 
   return (
 
-    <View style={styles.container} >
+    <SafeAreaView style={styles.container} >
 		<Text style={styles.header}>Icecream Tracker</Text>
-			<View style={styles.wrapper}>
+			<View>
 				<Pressable
 					onPress={() => router.push("/(publicSupplier)/createInvite")}
 					style={({pressed}) => [
@@ -76,8 +77,7 @@ export default function Home() {
 					<Text style={styles.pressable}>Login</Text>        
 				</Pressable>
 			</View>
-		<Text>Invite Token: {inviteToken ?? "No invite token yet"}</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 		// borderWidth: 3,
 		backgroundColor: "#eab2bb",
 		alignItems: "center",
-		justifyContent: "space-between",
+		justifyContent: "center",
 	},
 	text: {
 		color: "#3c6ca8",
@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
 		color: "#3c6ca8",
 		fontFamily: "AlfaSlabOne_400Regular",
 		fontSize: 30,
+		marginBottom: 20,
 	},
 	pressable: {
 		fontSize: 20,
@@ -108,12 +109,8 @@ const styles = StyleSheet.create({
 	wrapperCustom: {
 		minWidth: 200,
 		borderRadius: 8,
-		padding: 6,   
+		padding: 6,  
+		marginBottom: 20, 
 	},
-	wrapper: {
-		// borderColor: "red",
-		// borderWidth: 3,
-		height: 250,
-		justifyContent: "space-between",
-	}
+
 });
