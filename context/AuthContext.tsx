@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				if (response.ok) {
 					await saveUserDetails(result.token, result.ownerFirstName, result.ownerSurname, result.companyId);
 					setIsAuthenticated(true);
-					router.replace("/(auth)/(tabsOwner)"); // Redirect to home tab
+					router.replace("/(authOwner)/(tabsOwner)"); // Redirect to home tab
 				} else {
 					throw new Error(result.message || "Invalid credentials")
 				}         

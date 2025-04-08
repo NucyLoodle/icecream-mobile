@@ -272,7 +272,7 @@ export default function ViewVans() {
 
 
 				<Pressable
-					onPress={() => router.push("/(auth)/addVans")}
+					onPress={() => router.push("/(authOwner)/addVans")}
 					style={({ pressed }) => [
 					{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',

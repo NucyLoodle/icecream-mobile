@@ -27,7 +27,7 @@ export default function Index() {
 			<Text style={styles.text}>What would you like to do today?</Text>
 			<View>
 				<Pressable
-					onPress={() => router.push("/(auth)/viewVans")}
+					onPress={() => router.push("/(authOwner)/viewVans")}
 						style={({ pressed }) => [
 							{
 							backgroundColor: pressed ? '#eee060' : '#b8ecce',
@@ -38,7 +38,7 @@ export default function Index() {
 					<Text style={styles.pressable}>View my Vans</Text>
 				</Pressable>
 				<Pressable
-					onPress={() => router.push("/(auth)/viewDrivers")}
+					onPress={() => router.push("/(authOwner)/viewDrivers")}
 						style={({ pressed }) => [
 							{
 							backgroundColor: pressed ? '#eee060' : '#b8ecce',
@@ -49,7 +49,7 @@ export default function Index() {
 					<Text style={styles.pressable}>View my Drivers</Text>
 				</Pressable>
 				<Pressable
-					onPress={() => router.push("/(auth)/TrackVan")}
+					onPress={() => router.push("/(authOwner)/TrackVan")}
 						style={({ pressed }) => [
 							{
 							backgroundColor: pressed ? '#eee060' : '#b8ecce',

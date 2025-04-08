@@ -8,7 +8,7 @@ export default function PublicLayout() {
 	if (loading) return null; // Prevent flickering while checking auth
 
 	if (isAuthenticated) {
-		return <Redirect href="/(auth)/(tabsOwner)" />; // Redirect logged-in users
+		return <Redirect href="/(authOwner)/(tabsOwner)" />; // Redirect logged-in users
 	}
 
 	return (

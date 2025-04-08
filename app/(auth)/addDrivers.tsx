@@ -77,9 +77,9 @@ export default function AddDrivers() {
 
 			if (response.ok) {
 				console.log("success")
-				router.replace("/(auth)/(tabsOwner)");
+				router.replace("/(authOwner)/(tabsOwner)");
                 setTimeout(() => {
-                router.push("/(auth)/viewDrivers");
+                router.push("/(authOwner)/viewDrivers");
                 }, 100); 
 			} else {
 				throw new Error(result.error || "Failed to add driver");
