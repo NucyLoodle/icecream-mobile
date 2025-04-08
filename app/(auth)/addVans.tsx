@@ -81,7 +81,7 @@ export default function AddVans() {
 
 			if (response.ok) {
 				console.log("success")
-				router.replace("/(auth)/(tabs)");
+				router.replace("/(auth)/(tabsOwner)");
                 setTimeout(() => {
                 router.push("/(auth)/viewVans");
                 }, 100); 

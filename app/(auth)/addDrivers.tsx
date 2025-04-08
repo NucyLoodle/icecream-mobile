@@ -77,7 +77,7 @@ export default function AddDrivers() {
 
 			if (response.ok) {
 				console.log("success")
-				router.replace("/(auth)/(tabs)");
+				router.replace("/(auth)/(tabsOwner)");
                 setTimeout(() => {
                 router.push("/(auth)/viewDrivers");
                 }, 100); 
