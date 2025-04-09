@@ -41,6 +41,9 @@ async function removeUserDetails() {
   await SecureStore.deleteItemAsync("userToken");
   await SecureStore.deleteItemAsync("firstName");
   await SecureStore.deleteItemAsync("surname");
+  await SecureStore.deleteItemAsync("driverId")
+  await SecureStore.deleteItemAsync("companyId")
+  await SecureStore.deleteItemAsync("role")
 }
 
 
@@ -59,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			const token = await getToken();
 			const role = await getRole();
 			console.log(token)
-			console.log(role)
+			console.log("the role is", role)
 			if (token && role === 'owner') {
 				setIsAuthenticatedOwner(true);
 			}
@@ -98,12 +101,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			});
 			const result = await response.json();
 			// check for role and redirect accordingly
+			console.log("the result is", result)
 				if (response.ok) {
 					if(result.role === 'owner') {
 						await saveOwnerDetails(result.token, result.ownerFirstName, result.ownerSurname, result.companyId, result.role);
 						setIsAuthenticatedOwner(true);
 						router.replace("/(authOwner)/(tabsOwner)"); // Redirect to home tab
-					} else if (result.role === 'driver') {
+					}
+					if (result.role === 'driver') {
 						await saveDriverDetails(result.token, result.driverFirstName, result.driverSurname, result.driverId, result.companyId, result.role);
 						setIsAuthenticatedDriver(true);
 						router.replace("/(authDriver)"); // Redirect to home tab
@@ -123,6 +128,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout function (Redirect to Auth Screen)
 	const logout = async () => {
 		await removeUserDetails();
+		const token = await getToken();
+		const role = await getRole();
+		console.log(token)
+		console.log("the role is", role)
 		setIsAuthenticatedDriver(false);
 		setIsAuthenticatedOwner(false);
 		router.replace("/(publicSupplier)/Home"); //  Redirect to home screen
