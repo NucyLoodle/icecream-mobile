@@ -4,11 +4,12 @@ import { useAuth } from "@/context/AuthContext";
 
 
 
-export default function AuthLayout() {
-    const { isAuthenticated } = useAuth();
+export default function AuthOwnerLayout() {
+    const { isAuthenticatedOwner } = useAuth();
     
-    if (!isAuthenticated) {
+    if (!isAuthenticatedOwner) {
         console.log("Redirecting to /home")
+        console.log(isAuthenticatedOwner)
         return <Redirect href="/(publicSupplier)/Home" />
     }
     return (
