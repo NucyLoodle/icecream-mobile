@@ -9,8 +9,7 @@ export default function AuthOwnerLayout() {
     
     if (!isAuthenticatedOwner) {
         console.log("Redirecting to /home")
-        console.log(isAuthenticatedOwner)
-        return <Redirect href="/(publicSupplier)/Home" />
+        return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>

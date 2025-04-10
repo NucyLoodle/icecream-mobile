@@ -9,8 +9,7 @@ export default function AuthDriverLayout() {
     
     if (!isAuthenticatedDriver) {
         console.log("Redirecting to /home")
-        console.log(isAuthenticatedDriver)
-        return <Redirect href="/(publicSupplier)/Home" />
+        return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>

@@ -8,8 +8,8 @@ export default function AuthSharedLayout() {
     const { isAuthenticatedOwner, isAuthenticatedDriver } = useAuth();
     
     if (!isAuthenticatedOwner || !isAuthenticatedDriver) {
-        console.log("Redirecting to /home")
-        return <Redirect href="/(publicSupplier)/Home" />
+        console.log("Redirecting to /landingPage")
+        return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
