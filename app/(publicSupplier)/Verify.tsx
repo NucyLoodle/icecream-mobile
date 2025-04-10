@@ -97,6 +97,12 @@ export default function Verify() {
           
                 
                 
+            } else if (result.error === "Token expired") {
+              Alert.alert("Error", "Token expired. Please request a new token from your manager.");
+
+            } else if (result.error === "Owner token expired") {
+              Alert.alert("Error", "Token expired. Please contact us to request.");
+
             } else {
                 // If response is not OK, throw an error with the message returned from the API
                 throw new Error(result.error || "Failed to verify email");
