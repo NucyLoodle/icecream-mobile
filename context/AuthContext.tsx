@@ -2,7 +2,6 @@ import React, { ReactNode, createContext, useContext, useState, useEffect } from
 import { useRouter } from "expo-router";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
-import { set } from "react-hook-form";
 
 interface AuthContextType {
     isAuthenticatedDriver: boolean;
@@ -38,12 +37,12 @@ async function getRole() {
 }
 
 async function removeUserDetails() {
-  await SecureStore.deleteItemAsync("userToken");
-  await SecureStore.deleteItemAsync("firstName");
-  await SecureStore.deleteItemAsync("surname");
-  await SecureStore.deleteItemAsync("driverId")
-  await SecureStore.deleteItemAsync("companyId")
-  await SecureStore.deleteItemAsync("role")
+	await SecureStore.deleteItemAsync("userToken");
+	await SecureStore.deleteItemAsync("firstName");
+	await SecureStore.deleteItemAsync("surname");
+	await SecureStore.deleteItemAsync("driverId")
+	await SecureStore.deleteItemAsync("companyId")
+	await SecureStore.deleteItemAsync("role")
 }
 
 
@@ -85,13 +84,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     
         try {
-          // const response = await fetch("https://icecream-web-one.vercel.app/api/log-in-companies", {
-          //   method: "POST",
-          //   headers: {
-          //     "Content-Type": "application/json",
-          //   },
-          //   body: JSON.stringify(data),
-          // });
 			const response = await fetch(`${apiUrl}/log-in-companies`, {
 				method: "POST",
 				headers: {
