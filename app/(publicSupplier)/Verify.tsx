@@ -109,6 +109,7 @@ export default function Verify() {
                 // If response is not OK, throw an error with the message returned from the API
                 throw new Error(result.error || "Failed to verify email");
             }
+            router.push("/(publicSupplier)/Home");
       } catch (error: any) {
 
           Alert.alert("Error", error.message);
