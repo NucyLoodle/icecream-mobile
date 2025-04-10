@@ -8,28 +8,47 @@ import * as SecureStore from 'expo-secure-store';
 
 
 export default function Index() {
-        const router = useRouter();
-        const { logout} = useAuth();
+	const router = useRouter();
+	const { logout} = useAuth();
+	const [name, setName] = useState<string | null>(null);
+
+
+	useEffect(() => {
+		async function fetchName() {
+			const storedName = await SecureStore.getItemAsync("firstName");
+			setName(storedName);
+		}
+		fetchName();
+	}, []);
 
     return (
-        <View>
-        <Text>Driver Homepage</Text>
+        <SafeAreaView style={styles.container}>
+			<Text style={styles.heading}>Welcome, {name}!</Text>
+			<Pressable
+				onPress={() => router.push("/(auth)/TrackVan")}
+					style={({ pressed }) => [
+						{
+						backgroundColor: pressed ? '#eee060' : '#b8ecce',
+						},
+						styles.wrapperCustom,
+					]}
+			>
+				<Text style={styles.pressable}>Share my Location</Text>
+			</Pressable>
 
-    <Pressable
-        onPress={logout}
-            style={({ pressed }) => [
-                {
-                backgroundColor: pressed ? '#eee060' : '#da8558',
-                },
-                styles.wrapperCustom,
-            ]}
-    >
-        <Text style={styles.pressable}>Logout</Text>
-    </Pressable>
-    </View>
+			<Pressable
+				onPress={logout}
+					style={({ pressed }) => [
+						{
+						backgroundColor: pressed ? '#eee060' : '#da8558',
+						},
+						styles.wrapperCustom,
+					]}
+			>
+				<Text style={styles.pressable}>Logout</Text>
+			</Pressable>
+    	</SafeAreaView>
     )
-
-
 }
 
 const styles = StyleSheet.create({
