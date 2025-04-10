@@ -83,9 +83,20 @@ export default function Verify() {
         const result = await response.json();
 
         if (response.ok) {
-                // If registration is successful, display the invite token
-                Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName} from ${result.companyName}`);
-                router.push("/(publicSupplier)/Login")
+          if (result.role === 'owner') {
+              Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName} from ${result.companyName}`);
+              router.push("/(publicSupplier)/Login")
+          } else if (result.role === 'driver') {
+
+              Alert.alert("Success", `Thank you for verifying your email, ${result.firstName} ${result.lastName}!`);
+              router.push({
+                  pathname: "../(preAuth)/createPassword",
+                  params: { email: data.email, driverId: result.driverId },
+                });
+          }
+          
+                
+                
             } else {
                 // If response is not OK, throw an error with the message returned from the API
                 throw new Error(result.error || "Failed to verify email");
