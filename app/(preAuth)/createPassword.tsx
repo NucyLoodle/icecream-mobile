@@ -34,6 +34,9 @@ const schema = z.object({
 
 export default function createPassword() {
     const { email, driverId } = useLocalSearchParams();
+    console.log("driverId:", driverId, "email:", email);
+    const router = useRouter();
+
 
     const passwordRef = useRef<TextInput>(null);
     const confirmPasswordRef = useRef<TextInput>(null);
@@ -53,22 +56,20 @@ export default function createPassword() {
     const [loading, setLoading] = useState(false);
 
     const onSubmit = async (data: any) => {
-        const router = useRouter();
         setLoading(true);
+        console.log("Submitting form data:", data)
+        
+        
         const apiUrl = config.LocalHostAPI;
+        console.log("API URL is", apiUrl);
+
 		if (!apiUrl) {
 			console.error("API URL is not defined");
 			return;
 		}
-
+        console.log("Posting to:", `${apiUrl}/create-driver-password`);
 		try {
-		// const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
-		//   method: "POST",
-		//   headers: {
-		//     "Content-Type": "application/json",
-		//   },
-		//   body: JSON.stringify(data),
-		// });
+            console.log("Posting to:", `${apiUrl}/create-driver-password`);
 
 			const response = await fetch(`${apiUrl}/create-driver-password`, {
 				method: "POST",
@@ -76,12 +77,13 @@ export default function createPassword() {
 				"Content-Type": "application/json",
 				},
                 body: JSON.stringify({ ...data, driverId }),
+                // body: JSON.stringify({ data }),
 			});
 
 
 			const result = await response.json();
             if (response.ok) {
-                Alert.alert("Success", `Passwrord created successfully!`);
+                Alert.alert("Success", `Password created successfully!`);
                 router.push("/(publicSupplier)/Login")
 
             } else {
@@ -163,7 +165,10 @@ export default function createPassword() {
 
                 {!loading? (
                     <Pressable
-                        onPress={handleSubmit(onSubmit)} 
+                        onPress={() => {
+                            console.log("Submitting...");
+                            handleSubmit(onSubmit)();
+                        }}
                         style={({pressed}) => [
                             {
                             backgroundColor: pressed ? '#eee060' : '#b8ecce',
