@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function AuthSharedLayout() {
     const { isAuthenticatedOwner, isAuthenticatedDriver } = useAuth();
     
-    if (!isAuthenticatedOwner || !isAuthenticatedDriver) {
+    if (!isAuthenticatedOwner && !isAuthenticatedDriver) {
         console.log("Redirecting to /landingPage")
         return <Redirect href="/(publicNavigation)/LandingPage" />
     }
