@@ -37,7 +37,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(publicSupplier)" options={{headerShown: false}}/>
                 <Stack.Screen name="(auth)" options={{headerShown: false}}/>
                 <Stack.Screen name="(preAuth)" options={{headerShown: false}}/>
-                
+                <Stack.Screen name="(publicNavigation)" options={{headerShown: false}}/>
             </Stack>
         </AuthProvider>
     )
