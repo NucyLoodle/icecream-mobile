@@ -3,6 +3,8 @@ import { Text, Pressable, Alert, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from "expo-location";
 import { useLocalSearchParams } from "expo-router";
+import config from "@/config";
+import { useRouter } from "expo-router";
 
 // const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
@@ -13,30 +15,10 @@ const TrackVan: React.FC = () => {
 
 	const { vanId, driverId } = useLocalSearchParams();
 	console.log("driverId:", driverId, "vanId:", vanId);
+	const apiUrl = config.LocalHostAPI;
+	const router = useRouter();
 
-
-	useEffect(() => {
-		const connectWebSocket = () => {
-			const websocketUrl = process.env.EXPO_PUBLIC_WEBSOCKET_URL;
-			if (!websocketUrl) {
-				console.error("WebSocket URL is not defined");
-				return;
-			}
-			const socket = new WebSocket(websocketUrl);
-
-			socket.onopen = () => console.log("Connected to WebSocket");
-			socket.onerror = (error) => console.error("WebSocket Error:", error);
-			socket.onclose = () => console.log("WebSocket Disconnected");
-
-			setWs(socket);
-		};
-
-		connectWebSocket();
-
-		return () => {
-			ws?.close();
-		};
-	}, []);
+	const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
 
 	const requestLocationPermission = async () => {
 		const { status } = await Location.requestForegroundPermissionsAsync();
@@ -50,30 +32,88 @@ const TrackVan: React.FC = () => {
 
 	const startSharing = async () => {
 		if (!(await requestLocationPermission())) return;
-	
-		Location.watchPositionAsync(
-			{
-				accuracy: Location.Accuracy.High,
-				timeInterval: 5000, // Update every 5 seconds
-				distanceInterval: 10, // Update every 10 meters
-			},
-			(newLocation) => {
-				setLocation(newLocation);
-		
-				const payload = {
-					vanId: vanId,
-					lat: newLocation.coords.latitude,
-					lng: newLocation.coords.longitude,
-				};
-	
-				console.log("Sending payload to WebSocket:", payload);
-
-				if (ws?.readyState === WebSocket.OPEN) {
-					ws.send(JSON.stringify({ vanId: vanId, lat: newLocation.coords.latitude, lng: newLocation.coords.longitude }));
-				}
+	  
+		const websocketUrl = config.WebSocketUrl;
+		const socket = new WebSocket(websocketUrl);
+	  
+		socket.onopen = () => console.log("Connected to WebSocket");
+		socket.onerror = (error) => console.error("WebSocket Error:", error);
+		socket.onclose = () => console.log("Client disconnected");
+	  
+		setWs(socket); // store the socket so we can access it in the location watcher or stopSharing
+	  
+		const subscription = await Location.watchPositionAsync(
+		  {
+			accuracy: Location.Accuracy.High,
+			timeInterval: 5000,
+			distanceInterval: 10,
+		  },
+		  (newLocation) => {
+			setLocation(newLocation);
+	  
+			const payload = {
+			  vanId,
+			  lat: newLocation.coords.latitude,
+			  lng: newLocation.coords.longitude,
+			};
+	  
+			console.log("Sending payload to WebSocket:", payload);
+	  
+			if (socket.readyState === WebSocket.OPEN) {
+			  socket.send(JSON.stringify(payload));
+			} else {
+			  console.warn("WebSocket is not open, cannot send payload.");
 			}
+		  }
 		);
-	};
+	  
+		setLocationSubscription(subscription);
+	  };
+	  
+	
+
+	  const stopSharing = async () => {
+		if (locationSubscription) {
+		  locationSubscription.remove();
+		  setLocationSubscription(null);
+		}
+	  
+		if (ws) {
+		  ws.close();
+		  setWs(null);
+		}
+	  
+		checkOutVan(vanId as string);
+		console.log("Stopped sharing location.");
+	  };
+	  
+	const checkOutVan = async (vanId : string) => {
+		try {
+			const response = await fetch(`${apiUrl}/checkout-van`, {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				vanId
+				}),
+			});
+
+			const result = await response.json();
+		
+			if (response.ok) {
+				//direct to trackVan
+				router.push({
+					pathname: "/(authDriver)"});
+			} else {
+				throw new Error(result.error || "Please try again");
+			}
+
+		} catch (error: any) {
+			Alert.alert("Error", "Sorry, there was an error. Please try again."); 
+		}
+	}
+
 
 
   return (
@@ -89,6 +129,17 @@ const TrackVan: React.FC = () => {
               	styles.wrapperCustom,
             ]}>         
             <Text style={styles.pressable}>Share My Location</Text>        
+        </Pressable>
+
+		<Pressable
+            onPress={stopSharing}
+            style={({pressed}) => [
+				{
+					backgroundColor: pressed ? '#b8ecce' : '#eee060',
+				},
+              	styles.wrapperCustom,
+            ]}>         
+            <Text style={styles.pressable}>Stop Sharing</Text>        
         </Pressable>
 
         {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
