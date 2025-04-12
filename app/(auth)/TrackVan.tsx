@@ -52,9 +52,10 @@ const TrackVan: React.FC = () => {
 			setLocation(newLocation);
 	  
 			const payload = {
-			  vanId,
-			  lat: newLocation.coords.latitude,
-			  lng: newLocation.coords.longitude,
+				type: "newLocation",
+				vanId,
+				lat: newLocation.coords.latitude,
+				lng: newLocation.coords.longitude,
 			};
 	  
 			console.log("Sending payload to WebSocket:", payload);
@@ -79,13 +80,21 @@ const TrackVan: React.FC = () => {
 		}
 	  
 		if (ws) {
-		  ws.close();
+		  // Notify other clients that this van has stopped sharing
+		  const payload = {
+			vanId,
+			type: "vanStopped", // Type of message indicating van has stopped
+		  };
+		  ws.send(JSON.stringify(payload)); // Send to server to broadcast to other clients
+	  
+		  ws.close(); // Close WebSocket after notifying
 		  setWs(null);
 		}
-	  
+		console.log("Van ID being passed to checkOutVan:", vanId);
 		checkOutVan(vanId as string);
 		console.log("Stopped sharing location.");
 	  };
+	  
 	  
 	const checkOutVan = async (vanId : string) => {
 		try {
