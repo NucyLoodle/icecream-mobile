@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Text, Pressable, Alert, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from "expo-location";
+import { useLocalSearchParams } from "expo-router";
 
-
-const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
+// const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
 const TrackVan: React.FC = () => {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [ws, setWs] = useState<WebSocket | null>(null);
+
+	const { vanId, driverId } = useLocalSearchParams();
+	console.log("driverId:", driverId, "vanId:", vanId);
 
 
 	useEffect(() => {
@@ -58,7 +61,7 @@ const TrackVan: React.FC = () => {
 				setLocation(newLocation);
 		
 				const payload = {
-					vanId: VAN_ID,
+					vanId: vanId,
 					lat: newLocation.coords.latitude,
 					lng: newLocation.coords.longitude,
 				};
@@ -66,7 +69,7 @@ const TrackVan: React.FC = () => {
 				console.log("Sending payload to WebSocket:", payload);
 
 				if (ws?.readyState === WebSocket.OPEN) {
-					ws.send(JSON.stringify({ vanId: VAN_ID, lat: newLocation.coords.latitude, lng: newLocation.coords.longitude }));
+					ws.send(JSON.stringify({ vanId: vanId, lat: newLocation.coords.latitude, lng: newLocation.coords.longitude }));
 				}
 			}
 		);
