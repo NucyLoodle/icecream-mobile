@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Text, Pressable, Alert, StyleSheet, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Location from "expo-location";
 import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 
 
@@ -14,6 +14,8 @@ const ChooseVan = () => {
 	const [companyId, setCompanyId] = useState<string | null>(null);
 	// Select van from registered vans
     const apiUrl = config.LocalHostAPI;
+    const router = useRouter();
+    
 
     useEffect(() => {
         async function getCompanyId() {
@@ -50,6 +52,41 @@ const ChooseVan = () => {
             }
         }, [companyId, apiUrl]);
 
+    const selectVan = async (van: any) => {
+        console.log(van.van_id);
+        try {
+            const driverId = await SecureStore.getItemAsync("driverId");
+			const response = await fetch(`${apiUrl}/choose-van`, {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				vanId: van.van_id,
+				driverId: driverId,
+			}),
+		  });
+
+		  	const result = await response.json();
+	  
+			if (response.ok) {
+                //direct to trackVan
+                router.push({
+					pathname: "/(auth)/TrackVan",
+                    params: {
+                        vanId: van.van_id,
+                        driverId: driverId || "", 
+                      },
+                    });
+            } else {
+				throw new Error(result.error || "Please try again");
+			}
+
+        } catch (error: any) {
+            Alert.alert("Error", "Sorry, there was an error. Please try again."); 
+        }
+    };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,7 +101,7 @@ const ChooseVan = () => {
 				</View>
 				<View>
 					<Pressable
-						// onPress={startSharing}
+						onPress={() => selectVan(item)}
 						style={({pressed}) => [
 							{
 								backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
