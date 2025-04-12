@@ -49,7 +49,7 @@ export default function Index() {
 					<Text style={styles.pressable}>View my Drivers</Text>
 				</Pressable>
 				<Pressable
-					onPress={() => router.push("/(auth)/TrackVan")}
+					onPress={() => router.push("/(auth)/ChooseVan")}
 						style={({ pressed }) => [
 							{
 							backgroundColor: pressed ? '#eee060' : '#b8ecce',

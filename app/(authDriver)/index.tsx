@@ -25,7 +25,7 @@ export default function Index() {
         <SafeAreaView style={styles.container}>
 			<Text style={styles.heading}>Welcome, {name}!</Text>
 			<Pressable
-				onPress={() => router.push("/(auth)/TrackVan")}
+				onPress={() => router.push("/(auth)/ChooseVan")}
 					style={({ pressed }) => [
 						{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',
