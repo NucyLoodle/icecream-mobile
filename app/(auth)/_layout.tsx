@@ -13,6 +13,7 @@ export default function AuthSharedLayout() {
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
+            <Stack.Screen name="ChooseVan" options={{ headerShown: false }} />
             <Stack.Screen name="TrackVan" options={{ headerShown: false }} />
         </Stack>
 
