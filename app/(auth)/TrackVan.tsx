@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Text, Pressable, Alert, StyleSheet } from "react-native";
+import { Text, Pressable, Alert, StyleSheet, BackHandler } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from "expo-location";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import config from "@/config";
-import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 
 // const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
@@ -19,6 +19,8 @@ const TrackVan: React.FC = () => {
 	const router = useRouter();
 
 	const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
+	const [isSharing, setIsSharing] = useState(false);
+
 
 	const requestLocationPermission = async () => {
 		const { status } = await Location.requestForegroundPermissionsAsync();
@@ -69,6 +71,8 @@ const TrackVan: React.FC = () => {
 		);
 	  
 		setLocationSubscription(subscription);
+		setIsSharing(true);
+
 	  };
 	  
 	
@@ -77,6 +81,7 @@ const TrackVan: React.FC = () => {
 		if (locationSubscription) {
 		  locationSubscription.remove();
 		  setLocationSubscription(null);
+		  setIsSharing(false);
 		}
 	  
 		if (ws) {
@@ -94,6 +99,36 @@ const TrackVan: React.FC = () => {
 		checkOutVan(vanId as string);
 		console.log("Stopped sharing location.");
 	  };
+	  
+	useFocusEffect(
+		React.useCallback(() => {
+			const onBackPress = () => {
+			if (isSharing) {
+				Alert.alert(
+				"Still Sharing Location",
+				"You’re still sharing your location. Would you like to stop sharing and go back?",
+				[
+					{ text: "Cancel", style: "cancel" },
+					{
+					text: "Stop Sharing & Go Back",
+					style: "destructive",
+					onPress: async () => {
+						await stopSharing();
+						router.back(); // Navigate back
+					},
+					},
+				]
+				);
+				return true; // Block default back action
+			}
+			return false; // Allow default behavior
+			};
+		
+			BackHandler.addEventListener("hardwareBackPress", onBackPress);
+		
+			return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+		}, [isSharing])
+	);
 	  
 	  
 	const checkOutVan = async (vanId : string) => {
@@ -123,46 +158,69 @@ const TrackVan: React.FC = () => {
 		}
 	}
 
+	useEffect(() => {
+		return () => {
+			console.log("Cleaning up on unmount...");
+			stopSharing(); // stops tracking and closes WebSocket
+		};
+	  }, []);
+	  
 
 
-  return (
-    <SafeAreaView style={styles.container}>
-        <Text style={styles.heading}>Van Tracking</Text>
+	return (
+		<SafeAreaView style={styles.container}>
+		  <Text style={styles.heading}>Van Tracking</Text>
+	  	  
+		  	<Pressable
+				onPress={startSharing}
+				disabled={isSharing}
+				style={({ pressed }) => [
+					styles.button,
+					{
+					backgroundColor: isSharing
+						? '#ccc'
+						: pressed
+						? '#b8ecce'
+						: '#eee060',
+					},
+				]}
+			>
+				<Text style={[styles.buttonText, isSharing && styles.disabledText]}>
+					Share My Location
+				</Text>
+			</Pressable>
 
-        <Pressable
-            onPress={startSharing}
-            style={({pressed}) => [
-				{
-					backgroundColor: pressed ? '#b8ecce' : '#eee060',
-				},
-              	styles.wrapperCustom,
-            ]}>         
-            <Text style={styles.pressable}>Share My Location</Text>        
-        </Pressable>
+			<Pressable
+				onPress={stopSharing}
+				disabled={!isSharing}
+				style={({ pressed }) => [
+					styles.button,
+					{
+					backgroundColor: !isSharing
+						? '#ccc'
+						: pressed
+						? '#b8ecce'
+						: '#eee060',
+					},
+				]}
+			>
+				<Text style={[styles.buttonText, !isSharing && styles.disabledText]}>
+					Stop Sharing
+				</Text>
+			</Pressable>
 
-		<Pressable
-            onPress={stopSharing}
-            style={({pressed}) => [
-				{
-					backgroundColor: pressed ? '#b8ecce' : '#eee060',
-				},
-              	styles.wrapperCustom,
-            ]}>         
-            <Text style={styles.pressable}>Stop Sharing</Text>        
-        </Pressable>
-
-        {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
-        
-		{location ? (
-          	<Text style={styles.text}>Latitude: {location.coords.latitude}, Longitude: {location.coords.longitude}</Text>
-        ) : (
-          	<Text style={styles.text}>Location not available</Text>
-        )}
-
-    </SafeAreaView>
-  );
-};
-
+	  
+		  {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+	  
+		  <Text style={styles.locationText}>
+			{location
+			  ? `Latitude: ${location.coords.latitude.toFixed(4)}\nLongitude: ${location.coords.longitude.toFixed(4)}`
+			  : 'Location not available'}
+		  </Text>
+		</SafeAreaView>
+	  );
+	  
+	}
 
 
 
@@ -171,28 +229,58 @@ const TrackVan: React.FC = () => {
 export default TrackVan;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#eab2bb',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  heading: {
-    color: '#3c6ca8',
-    fontFamily: 'AlfaSlabOne_400Regular',
-    fontSize: 20,
-  },
-  text: {
-    color: '#3c6ca8',
-    fontFamily: 'Poppins_400Regular',
-    fontSize: 20,
-  },
-  pressable: {
-    fontSize: 20,
-    color: '#3e1755',
-  },
-  wrapperCustom: {
-    borderRadius: 8,
-    padding: 6,
-  },
-});
+	container: {
+	  flex: 1,
+	  backgroundColor: '#eab2bb',
+	  alignItems: 'center',
+	  justifyContent: 'center',
+	  paddingHorizontal: 20,
+	},
+	heading: {
+	  color: '#3c6ca8',
+	  fontFamily: 'AlfaSlabOne_400Regular',
+	  fontSize: 26,
+	  marginBottom: 10,
+	},
+	subheading: {
+	  color: '#3c6ca8',
+	  fontFamily: 'Poppins_400Regular',
+	  fontSize: 16,
+	  marginBottom: 4,
+	},
+	button: {
+	  borderRadius: 12,
+	  paddingVertical: 14,
+	  paddingHorizontal: 20,
+	  marginVertical: 10,
+	  width: '80%',
+	  alignItems: 'center',
+	  shadowColor: '#000',
+	  shadowOffset: { width: 0, height: 1 },
+	  shadowOpacity: 0.2,
+	  shadowRadius: 1.41,
+	  elevation: 2,
+	},
+	buttonText: {
+	  fontSize: 18,
+	  color: '#3e1755',
+	  fontFamily: 'Poppins_400Regular',
+	},
+	locationText: {
+	  color: '#3c6ca8',
+	  fontFamily: 'Poppins_400Regular',
+	  fontSize: 18,
+	  marginTop: 30,
+	  textAlign: 'center',
+	},
+	error: {
+	  color: '#ff1e00',
+	  fontSize: 16,
+	  marginTop: 15,
+	  textAlign: 'center',
+	},
+	disabledText: {
+		color: '#888',
+	},
+  });
+  
