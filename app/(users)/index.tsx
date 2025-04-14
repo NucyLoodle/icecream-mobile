@@ -3,6 +3,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { View, Text, StyleSheet, ActivityIndicator, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Location from "expo-location";
+import config from "@/config";
 
 
 const DisplayMap: React.FC = () => {
@@ -23,26 +24,27 @@ const DisplayMap: React.FC = () => {
 
 		useEffect(() => {
 		// Mock data for testing
-			const mockVans = [
-			{
-				id: "test-van-1",
-				latitude: 51.439330 + 0.001,
-				longitude: -2.003884 + 0.001,
-			},
-			{
-				id: "test-van-2",
-				latitude: 51.439330 - 0.001,
-				longitude: -2.003884 - 0.001,
-			},
-			{
-				id: "test-van-3",
-				latitude: 51.439330 + 0.002,
-				longitude: -2.003884 - 0.0015,
-			},
-			];
+			// const mockVans = [
+			// {
+			// 	id: "test-van-1",
+			// 	latitude: 51.439330 + 0.001,
+			// 	longitude: -2.003884 + 0.001,
+			// },
+			// {
+			// 	id: "test-van-2",
+			// 	latitude: 51.439330 - 0.001,
+			// 	longitude: -2.003884 - 0.001,
+			// },
+			// {
+			// 	id: "test-van-3",
+			// 	latitude: 51.439330 + 0.002,
+			// 	longitude: -2.003884 - 0.0015,
+			// },
+			// ];
 
-			setVans(mockVans);
-			const socket = new WebSocket("ws://localhost:8080");
+			// setVans(mockVans);
+			const websocketUrl = config.WebSocketUrl;
+			const socket = new WebSocket(websocketUrl);
 		
 			socket.onmessage = (event) => {
 				const data = JSON.parse(event.data);
@@ -66,7 +68,7 @@ const DisplayMap: React.FC = () => {
 		
 			return () => socket.close();
 		}, []);
-	
+		console.log("Vans: ", vans);
 		return vans;
 	}
 
