@@ -44,8 +44,7 @@ export default function LandingPage() {
         <Text style={styles.header}>Icecream Tracker</Text>
             <View>
                 <Pressable
-                    // onPress={() => router.push("/(publicSupplier)/createInvite")}
-                    onPress={() => console.log("Memeber of public")}
+                    onPress={() => router.push("/(users)")}
                     style={({pressed}) => [
                         {
                         backgroundColor: pressed ? '#eee060' : '#b8ecce',
