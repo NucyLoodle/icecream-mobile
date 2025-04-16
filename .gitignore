@@ -46,3 +46,7 @@ eas-cache/
 eas-build/
 
 example-app
+
+# Testing
+
+coverage/
