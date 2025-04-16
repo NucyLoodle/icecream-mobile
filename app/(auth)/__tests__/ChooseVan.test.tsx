@@ -125,6 +125,62 @@ describe('ChooseVan Component', () => {
 		});
 	  
 		alertSpy.mockRestore();
-	  });	  
+	  });	 
+	  
+	  it('throws an error and handles it with the correct message', async () => {
+		const errorMessage = 'Custom error message';
+	  
+		(fetch as jest.Mock)
+			.mockResolvedValueOnce({
+				json: async () => [
+				{
+					van_id: '1',
+					van_nickname: 'Minty',
+					van_reg: 'ICE123',
+					in_use: false,
+				}
+				],
+				ok: true,
+			})  
+		  	.mockRejectedValueOnce(new Error('Server down'));  
+	  
+		const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+	  
+		const { getByText } = render(<ChooseVan />);
+	  
+		await waitFor(() => expect(getByText('Select')).toBeTruthy());
+	  
+		fireEvent.press(getByText('Select'));
+	  
+		await waitFor(() => {
+			expect(alertSpy).toHaveBeenCalledWith(
+				"Error",
+				expect.stringContaining("Sorry, there was an error. Please try again.")
+			);
+		});
+	  
+		alertSpy.mockClear(); 
+	  
+		(fetch as jest.Mock)
+			.mockResolvedValueOnce({
+				json: async () => ({}),  
+				ok: false,  
+			});
+	  
+		fireEvent.press(getByText('Select'));
+	
+		await waitFor(() => {
+			expect(alertSpy).toHaveBeenCalledWith(
+				"Error",
+				expect.stringContaining("Please try again")
+			);
+		});
+	  
+		alertSpy.mockRestore();  
+	  });
+	  
+	  
+	  
+	  
 	  
 });
