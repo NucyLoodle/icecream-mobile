@@ -57,7 +57,8 @@
     "react-native-webview": "13.12.5",
     "zod": "^3.24.2",
     "react-native-maps": "1.18.0",
-    "expo-notifications": "~0.29.14"
+    "expo-notifications": "~0.29.14",
+    "expo-device": "~7.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
