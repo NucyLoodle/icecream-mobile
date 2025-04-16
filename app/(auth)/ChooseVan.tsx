@@ -12,11 +12,9 @@ const ChooseVan = () => {
 	const [vans, setVans] = useState<any[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [companyId, setCompanyId] = useState<string | null>(null);
-	// Select van from registered vans
     const apiUrl = config.LocalHostAPI;
     const router = useRouter();
     
-
     useEffect(() => {
         async function getCompanyId() {
             const storedId = await SecureStore.getItemAsync("companyId");
@@ -38,11 +36,11 @@ const ChooseVan = () => {
                     });
 
                     const data: any[] = await response.json();
-                    setVans(data); // Store vans data after fetching
+                    setVans(data); 
                 } catch (error) {
                     console.error("Error fetching vans:", error);
                 } finally {
-                    setLoading(false); // Stop loading state after fetching
+                    setLoading(false);
                 }
             };
 
@@ -60,12 +58,12 @@ const ChooseVan = () => {
 				method: "POST",
 				headers: {
 				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				vanId: van.van_id,
-				driverId: driverId,
-			}),
-		  });
+				},
+				body: JSON.stringify({
+					vanId: van.van_id,
+					driverId: driverId,
+				}),
+			});
 
 		  	const result = await response.json();
 	  
@@ -74,10 +72,10 @@ const ChooseVan = () => {
                 router.push({
 					pathname: "/(auth)/TrackVan",
                     params: {
-                        vanId: van.van_id,
-                        driverId: driverId || "", 
-                      },
-                    });
+						vanId: van.van_id,
+						driverId: driverId || "", 
+					},
+                });
             } else {
 				throw new Error(result.error || "Please try again");
 			}
@@ -126,78 +124,77 @@ const ChooseVan = () => {
 export default ChooseVan;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#eab2bb',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heading: {
-    color: '#3c6ca8',
-    fontFamily: 'AlfaSlabOne_400Regular',
-    fontSize: 20,
-  },
-  text: {
-    color: '#3c6ca8',
-    fontFamily: 'Poppins_400Regular',
-    fontSize: 20,
-  },
-  pressable: {
-    fontSize: 20,
-    color: '#3e1755',
+	container: {
+		flex: 1,
+		backgroundColor: '#eab2bb',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	heading: {
+		color: '#3c6ca8',
+		fontFamily: 'AlfaSlabOne_400Regular',
+		fontSize: 20,
+	},
+	text: {
+		color: '#3c6ca8',
+		fontFamily: 'Poppins_400Regular',
+		fontSize: 20,
+	},
+	pressable: {
+		fontSize: 20,
+		color: '#3e1755',
 
-  },
-  wrapperCustom: {
-    borderRadius: 8,
-    padding: 6,
-    
-  },
-vanCard: {
-	width: '40%',
-	alignItems: "center",
-	justifyContent: "center",
-	backgroundColor: "white",
-	padding: 20,
-	margin: 10,
-	borderRadius: 10,
-	shadowColor: "#000",
-	shadowOffset: { width: 0, height: 2 },
-	shadowOpacity: 0.1,
-	shadowRadius: 4,
-	elevation: 3,
-},
-vanNickname: {
-	fontFamily: "AlfaSlabOne_400Regular",
-	fontSize: 16,
-	fontWeight: "bold",
-	marginBottom: 5,
-	textAlign: "center",
-	color: "#3c6ca8",
-},
-regPlate: {
-	marginTop: 10,
-    marginBottom: 10,
-	backgroundColor: "#FFD700",
-	paddingVertical: 2,
-	paddingHorizontal: 15,
-	borderRadius: 5,
-	borderWidth: 2,
-	borderColor: "#000",
-	textAlign: "center",
-	minWidth: 100,
-	overflow: "hidden",
+	},
+	wrapperCustom: {
+		borderRadius: 8,
+		padding: 6,   
+	},
+	vanCard: {
+		width: '40%',
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "white",
+		padding: 20,
+		margin: 10,
+		borderRadius: 10,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 4,
+		elevation: 3,
+	},
+	vanNickname: {
+		fontFamily: "AlfaSlabOne_400Regular",
+		fontSize: 16,
+		fontWeight: "bold",
+		marginBottom: 5,
+		textAlign: "center",
+		color: "#3c6ca8",
+	},
+	regPlate: {
+		marginTop: 10,
+		marginBottom: 10,
+		backgroundColor: "#FFD700",
+		paddingVertical: 2,
+		paddingHorizontal: 15,
+		borderRadius: 5,
+		borderWidth: 2,
+		borderColor: "#000",
+		textAlign: "center",
+		minWidth: 100,
+		overflow: "hidden",
 
-},
-regPlateText: {
-	fontSize: 14,
-	fontWeight: "bold",
-},
-icon: {
-	marginHorizontal: 10,
-},
-gridContainer: {
-	flexDirection: "row",
-	flexWrap: "wrap",
-	justifyContent: "space-between",
-},
+	},
+	regPlateText: {
+		fontSize: 14,
+		fontWeight: "bold",
+	},
+	icon: {
+		marginHorizontal: 10,
+	},
+	gridContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-between",
+	},
 });
