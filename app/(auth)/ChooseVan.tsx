@@ -6,7 +6,9 @@ import * as SecureStore from 'expo-secure-store';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-
+export const getVanCardStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
 
 const ChooseVan = () => {
 	const [vans, setVans] = useState<any[]>([]);
@@ -85,6 +87,8 @@ const ChooseVan = () => {
         }
     };
 
+	
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,11 +103,10 @@ const ChooseVan = () => {
 				</View>
 				<View>
 					<Pressable
+						testID="select-van-button"
 						onPress={() => selectVan(item)}
 						style={({pressed}) => [
-							{
-								backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
-							},
+							getVanCardStyle(pressed),
 							styles.wrapperCustom,
 						]}>         
 						<Text style={styles.pressable}>Select</Text>        

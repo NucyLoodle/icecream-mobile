@@ -3,8 +3,10 @@ import 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import ChooseVan from '../ChooseVan';
+import { getVanCardStyle } from '../ChooseVan';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter } from 'expo-router';
+
 
 jest.mock('expo-router', () => ({
     useRouter: jest.fn(),
@@ -177,10 +179,10 @@ describe('ChooseVan Component', () => {
 		});
 	  
 		alertSpy.mockRestore();  
-	  });
-	  
-	  
-	  
-	  
-	  
+	});
+
+	it('applies the correct backgroundColor based on pressed state', () => {
+		expect(getVanCardStyle(true).backgroundColor).toBe('#b8ecce');
+		expect(getVanCardStyle(false).backgroundColor).toBe('#eab2bb');
+	  });	  
 });
