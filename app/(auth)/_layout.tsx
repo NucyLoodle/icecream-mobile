@@ -4,18 +4,17 @@ import { useAuth } from "@/context/AuthContext";
 
 
 
-export default function AuthLayout() {
-    const { isAuthenticated } = useAuth();
+export default function AuthSharedLayout() {
+    const { isAuthenticatedOwner, isAuthenticatedDriver } = useAuth();
     
-    if (!isAuthenticated) {
-        console.log("Redirecting to /home")
-        return <Redirect href="/(public)/Home" />
+    if (!isAuthenticatedOwner && !isAuthenticatedDriver) {
+        console.log("Redirecting to /landingPage")
+        return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (
         <Stack screenOptions={{ headerBackButtonDisplayMode: "minimal" }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="viewVans" options={{ title: "View your Vans" }} />
-            <Stack.Screen name="viewDrivers" options={{ title: "View your Drivers" }} />
+            <Stack.Screen name="ChooseVan" options={{ headerShown: false }} />
+            <Stack.Screen name="TrackVan" options={{ headerShown: false }} />
         </Stack>
 
     )

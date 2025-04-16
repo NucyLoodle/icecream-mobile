@@ -10,21 +10,20 @@ import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 
 
-const schema = z.object({
-	vanReg: z.string()
-					.nonempty({ message: "Van registration required" })
-					.min(2, { message: "Must be at least 2 characters" }),
-	vanNickname: z.string()
-					.optional(),
-});
+const addDriverSchema = z.object({
+    firstName: z.string().nonempty({ message: "Your first name is required" }).min(2, { message: "Must be at least 2 characters" }),
+    lastName: z.string().nonempty({ message: "Your surname is required" }).min(2, { message: "Must be at least 2 characters" }),
+    email: z.string().nonempty().email({ message: 'Please enter a valid email.' }).trim().transform((val) => val.toLowerCase()),
+})
 
 
-export default function AddVans() {
+export default function AddDrivers() {
     const [id, setId] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
-    const vanRegRef = useRef<TextInput>(null);
-    const vanNicknameRef = useRef<TextInput>(null);
+    const firstNameRef = useRef<TextInput>(null);
+    const lastNameRef = useRef<TextInput>(null);
+    const emailRef = useRef<TextInput>(null);
 
     const apiUrl = config.LocalHostAPI;
 
@@ -41,15 +40,12 @@ export default function AddVans() {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(addDriverSchema),
         mode: 'onChange'
     });
 
     const onSubmit = async (data: any) => {
 		setLoading(true);
-		if (!data.vanNickname) {
-			data.vanNickname = null;
-		}
 		// console.log(data); //debugging statement
 
 		if (!apiUrl) {
@@ -66,7 +62,7 @@ export default function AddVans() {
 		//   body: JSON.stringify(data),
 		// });
 
-			const response = await fetch(`${apiUrl}/add-vans`, {
+			const response = await fetch(`${apiUrl}/add-drivers`, {
 				method: "POST",
 				headers: {
 				"Content-Type": "application/json",
@@ -81,19 +77,23 @@ export default function AddVans() {
 
 			if (response.ok) {
 				console.log("success")
-				router.replace("/(auth)/(tabs)");
+				router.replace("/(authOwner)/(tabsOwner)");
                 setTimeout(() => {
-                router.push("/(auth)/viewVans");
+                router.push("/(authOwner)/viewDrivers");
                 }, 100); 
 			} else {
-				throw new Error(result.error || "Failed to add van");
+				throw new Error(result.error || "Failed to add driver");
 			}
 
 		} catch (error: any) {
 			if (error.message === "Already registered") {
 				console.log("already registered")
-				Alert.alert("Error", "This van is already registered"); 
-			}
+				Alert.alert("Error", "This driver is already registered"); 
+			} else if (error.message === "Failed to send verification email.") {
+                Alert.alert("Error", "Unfortunately, we weren't able to send a verification email. Please delete the driver and try again.")
+            } else {
+                Alert.alert("Error", "Sorry, there was an error during sign up. If it continues, please contact us.")
+            }
 			
 		} finally {
 		    setLoading(false);	
@@ -102,47 +102,73 @@ export default function AddVans() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.heading}>Add a Van</Text>
-            <Text style={styles.text}>Please provide the van registration. A nickname is optional, but fun!</Text>
+            <Text style={styles.heading}>Add a Driver</Text>
+            <Text style={styles.text}>Please provide their email and full name. An invite link will be emailed to your driver.</Text>
 
-            <Text style={styles.text}>Van Registration Plate</Text>
+            <Text style={styles.text}>First name</Text>
             <Controller
                 control={control}
-                name="vanReg"
+                name="firstName"
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    ref={vanRegRef}
-                    onSubmitEditing={() => vanNicknameRef.current?.focus()}
+                    ref={firstNameRef}
+                    onSubmitEditing={() => lastNameRef.current?.focus()}
                     returnKeyType="next"
                     style={styles.input}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
+                    textContentType="givenName"
+                    autoComplete="given-name"
                 />
                 )}
             />
-            {errors.vanReg && <Text style={styles.error}>{errors.vanReg.message}</Text>}	
+            {errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}	
 
 
-            <Text style={styles.text}>Van Nickname</Text>
+            <Text style={styles.text}>Surname</Text>
             <Controller
                 control={control}
-                name="vanNickname"
+                name="lastName"
                 render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                    ref={vanNicknameRef}
+                    ref={lastNameRef}
+                    onSubmitEditing={() => emailRef.current?.focus()}
+                    returnKeyType="next"
+                    style={styles.input}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    blurOnSubmit={false}
+                    textContentType="familyName"
+                    autoComplete="family-name"
+
+                />
+                )}
+            />
+            {errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
+
+            <Text style={styles.text}>Email</Text>
+            <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                    ref={emailRef}
                     returnKeyType="done"
                     style={styles.input}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
+                    textContentType="emailAddress"
+                    autoComplete="email"
 
                 />
                 )}
             />
-            {errors.vanNickname && <Text style={styles.error}>{errors.vanNickname.message}</Text>}
+            {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
                 
             {!loading? (
                 <Pressable

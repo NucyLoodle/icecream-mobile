@@ -32,9 +32,13 @@ export default function RootLayout() {
     return (
         <AuthProvider>
             <Stack>
+                <Stack.Screen name="(users)" options={{headerShown: false}}/>
+                <Stack.Screen name="(authOwner)" options={{headerShown: false}}/>
+                <Stack.Screen name="(authDriver)" options={{headerShown: false}}/>
+                <Stack.Screen name="(publicSupplier)" options={{headerShown: false}}/>
                 <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-                <Stack.Screen name="(public)" options={{headerShown: false}}/>
-                
+                <Stack.Screen name="(preAuth)" options={{headerShown: false}}/>
+                <Stack.Screen name="(publicNavigation)" options={{headerShown: false}}/>
             </Stack>
         </AuthProvider>
     )

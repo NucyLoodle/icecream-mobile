@@ -12,26 +12,34 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 
 const schema = z.object({
-	vanReg: z.string()
-					.nonempty({ message: "Van registration required" })
-					.min(2, { message: "Must be at least 2 characters" }),
-	vanNickname: z.string()
-					.optional(),
+	email: z.string()
+          .email({ message: "Invalid email address" })
+          .nonempty({ message: "Email is required" })
+          .transform((email) => email.toLowerCase()),
+	firstName: z.string()
+              .nonempty({ message: "First name required" })
+              .min(2, { message: "Must be at least 2 characters" }),
+  lastName: z.string()
+              .nonempty({ message: "Last name required" })
+              .min(2, { message: "Must be at least 2 characters" }),
 });
 
 
 
-export default function ViewVans() {
-	const [vans, setVans] = useState<any[]>([]);
+export default function ViewDrivers() {
+	const [drivers, setDrivers] = useState<any[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [id, setId] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
-	const [editingVan, setEditingVan] = useState<any | null>(null);
-	const [editedNickname, setEditedNickname] = useState<string>('');
+	const [editingDriver, setEditingDriver] = useState<any | null>(null);
+	const [editedFirstName, setEditedFirstName] = useState<string>('');
+  const [editedLastName, setEditedLastName] = useState<string>('');
+  const [editedEmail, setEditedEmail] = useState<string>('');
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	const vanRegRef = useRef<TextInput>(null);
-	const vanNicknameRef = useRef<TextInput>(null);
+	const firstNameRef = useRef<TextInput>(null);
+	const lastNameRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
 
 	const {
 		control,
@@ -57,9 +65,9 @@ export default function ViewVans() {
 
 	useEffect(() => {
 		if (id && apiUrl) {
-			const fetchVans = async () => {
+			const fetchDrivers = async () => {
 				try {
-					const response = await fetch(`${apiUrl}/view-vans`, {
+					const response = await fetch(`${apiUrl}/view-drivers`, {
 						method: "POST",
 						headers: {
 						"Content-Type": "application/json",
@@ -67,110 +75,122 @@ export default function ViewVans() {
 						body: JSON.stringify({ companyId: id }),
 					});
 
-					const data: any[] = await response.json();
-					setVans(data); // Store vans data after fetching
+					const rawData: any[] = await response.json();
+          const data = rawData.map(driver => ({
+            driverId: driver.driver_id,
+            firstName: driver.driver_first_name,
+            lastName: driver.driver_last_name,
+            companyId: driver.company_id,
+            email: driver.email,
+            role: driver.role,
+            isActive: driver.is_active,
+          }));
+          console.log(data)
+					setDrivers(data); 
 				} catch (error) {
-					console.error("Error fetching vans:", error);
+					console.error("Error fetching drivers:", error);
 				} finally {
-					setLoading(false); // Stop loading state after fetching
+					setLoading(false);
 				}
 			};
 
-			fetchVans();
+			fetchDrivers();
 			} else {
 				console.log("Waiting for companyId...");
 			}
-		}, [id, apiUrl]); // Fetch vans only when companyId and apiUrl are available
+		}, [id, apiUrl]); 
 
 
-	const handleEdit = (van: any) => {
-		setEditingVan(van);
+	const handleEdit = (driver: any) => {
+		setEditingDriver(driver);
 		reset({
-		  vanReg: van.van_reg,
-		  vanNickname: van.van_nickname || '',
+		  firstName: driver.firstName,
+		  lastName: driver.lastName,
+      email: driver.email,
 		});
 		setIsEditing(true);
 	  };
 
-	const handleDelete = (van: any) => {
-		setEditingVan(van);
+	const handleDelete = (driver: any) => {
+		setEditingDriver(driver);
 		setIsDeleting(true);
-		setEditedNickname(van.van_nickname)
+		setEditedEmail(driver.email)
+    setEditedFirstName(driver.firstName);
+    setEditedLastName(driver.lastName); 
 	}
 
 
 	const onSubmit = async (data: any) => {
-		if (data.vanNickname === editingVan.van_nickname && data.vanReg === editingVan.van_reg) {
+		if (data.firstName === editingDriver.firstName && data.lastName === editingDriver.lastName && data.email === editingDriver.email) {
 			Alert.alert("No changes detected", "Please make some changes before saving.");
 			return; 
 		}
 		try {
-			const response = await fetch(`${apiUrl}/update-van`, {
+			const response = await fetch(`${apiUrl}/update-drivers`, {
 				method: "POST",
 				headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				vanId: editingVan.van_id,
-				vanNickname: data.vanNickname,
-				vanReg: data.vanReg,
+        driver_id: editingDriver.driverId,
+        company_id: id,
+        ...data
 			}),
 		  });
 
 		  	const result = await response.json();
 	  
 			if (response.ok) {
-				const updatedVans = vans.map(van =>
-				van.van_id === editingVan.van_id
-					? { ...van, van_nickname: data.vanNickname, van_reg: data.vanReg }
-					: van
+				const updatedDrivers = drivers.map(driver =>
+				driver.driverId === editingDriver.driverId
+					? { ...driver, firstName: data.firstName, lastName: data.lastName, email: data.email }
+					: driver
 				);
-				setVans(updatedVans);
+				setDrivers(updatedDrivers);
 				setIsEditing(false);
-				setEditingVan(null);
+				setEditingDriver(null);
 			} else {
-				throw new Error(result.error || "Failed to add van");
+				throw new Error(result.error || "Failed to update driver");
 			}
 
 		} catch (error: any) {
 			if (error.message === "Already registered") {
-				Alert.alert("Error", "This van is already registered"); 
+				Alert.alert("Error", "This driver is already registered"); 
 			}
 		}
 	};
 
 	  
 	const handleClose = () => {
-		setIsEditing(false); // Close the edit view without saving
-		setEditingVan(null); // Clear the editing van
+		setIsEditing(false); 
+		setEditingDriver(null); 
 		setIsDeleting(false);
 	};
 
 	const handleConfirmDelete = async () => {
-		// Send the update to the backend
 		try {
-			const response = await fetch(`${apiUrl}/delete-van`, {
+			const response = await fetch(`${apiUrl}/delete-driver`, {
 				method: "POST",
 				headers: {
 				"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-				vanId: editingVan.van_id,
+				driverId: editingDriver.driverId,
 				}),
 			});
 
 			if (response.ok) {
-				const updatedVans = vans.filter(el => el.van_id !== editingVan.van_id);
+				const updatedDrivers = drivers.filter(el => el.driverId !== editingDriver.driverId);
 
-				setVans(updatedVans);
+				setDrivers(updatedDrivers);
 				setIsEditing(false); // Close the edit mode
-				setEditingVan(null); // Clear the editing van
+				setEditingDriver(null); // Clear the editing van
 				setIsDeleting(false);
 			} else {
-				console.error("Error saving van details");
+				console.error("Error deleting driver details");
 			}
 		} catch (error) {
-			console.error("Error updating van:", error);
+			console.error("Error deleting driver:", error);
 		}
 
 	}
@@ -178,15 +198,16 @@ export default function ViewVans() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView>
-				<Text style={styles.heading}>View Your Vans</Text>
+				<Text style={styles.heading}>View Your Drivers</Text>
 				<View style={styles.gridContainer}>
-					{vans.map((item) => (
-					<View key={item.van_id} style={styles.vanCard}>
-						<Text style={styles.vanNickname}>{item.van_nickname}</Text>
-						<FontAwesome5 name="truck" size={40} color="#b8ecce" />
-						<View style={styles.regPlate}>
-						<Text style={styles.regPlateText}>{item.van_reg}</Text>
-						</View>
+					{drivers.map((item) => (
+					<View key={item.driverId} style={styles.driverCard}>
+						<Text style={styles.driverDetails}>{item.firstName}</Text>
+            <Text style={styles.driverDetails}>{item.lastName}</Text>
+						<FontAwesome5 name="user-circle" size={40} color="#b8ecce" />
+						<Text style={styles.driverDetails}>{item.email}</Text>
+            <Text style={styles.driverDetails}>Validated account? {item.isActive ? 'Yes' : 'No'}</Text>
+
 						<View style={styles.iconContainer}>
 						<TouchableOpacity onPress={() => handleEdit(item)}>
 							<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
@@ -203,14 +224,14 @@ export default function ViewVans() {
 				<Modal visible={isEditing} animationType="slide" transparent={true}>
 				<View style={styles.modalBackground}>
 					<View style={styles.modalContent}>
-					<Text style={styles.text}>Van Registration Plate</Text>
+					<Text style={styles.text}>First Name</Text>
 					<Controller
 						control={control}
-						name="vanReg"
+						name="firstName"
 						render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
-							ref={vanRegRef}
-							onSubmitEditing={() => vanNicknameRef.current?.focus()}
+							ref={firstNameRef}
+							onSubmitEditing={() => lastNameRef.current?.focus()}
 							returnKeyType="next"
 							style={styles.input}
 							onBlur={onBlur}
@@ -220,15 +241,34 @@ export default function ViewVans() {
 						/>
 						)}
 					/>
-					{errors.vanReg && <Text style={styles.error}>{errors.vanReg.message}</Text>}
+					{errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}
 
-					<Text style={styles.text}>Van Nickname</Text>
+					<Text style={styles.text}>Last Name</Text>
 					<Controller
 						control={control}
-						name="vanNickname"
+						name="lastName"
 						render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
-							ref={vanNicknameRef}
+							ref={lastNameRef}
+              onSubmitEditing={() => emailRef.current?.focus()}
+							returnKeyType="next"
+							style={styles.input}
+							onBlur={onBlur}
+							onChangeText={onChange}
+							value={value}
+							blurOnSubmit={false}
+						/>
+						)}
+					/>
+					{errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
+
+          <Text style={styles.text}>Email</Text>
+					<Controller
+						control={control}
+						name="email"
+						render={({ field: { onChange, onBlur, value } }) => (
+						<TextInput
+							ref={emailRef}
 							returnKeyType="done"
 							style={styles.input}
 							onBlur={onBlur}
@@ -238,7 +278,7 @@ export default function ViewVans() {
 						/>
 						)}
 					/>
-					{errors.vanNickname && <Text style={styles.error}>{errors.vanNickname.message}</Text>}
+					{errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
 					<View style={styles.modalButtons}>
 						<TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.saveButton}>
@@ -256,7 +296,7 @@ export default function ViewVans() {
 				<Modal visible={isDeleting} animationType="slide" transparent={true}>
 					<View style={styles.modalBackground}>
 					<View style={styles.modalContent}>
-						<Text>Are you sure you want to delete {editedNickname}?</Text>
+						<Text>Are you sure you want to delete {editedFirstName} {editedLastName}?</Text>
 						<View style={styles.modalButtons}>
 						<TouchableOpacity onPress={handleConfirmDelete} style={styles.saveButton}>
 							<Text style={styles.saveText}>Delete</Text>
@@ -272,7 +312,7 @@ export default function ViewVans() {
 
 
 				<Pressable
-					onPress={() => router.push("/(auth)/addVans")}
+					onPress={() => router.push("/(authOwner)/addDrivers")}
 					style={({ pressed }) => [
 					{
 						backgroundColor: pressed ? '#eee060' : '#b8ecce',
@@ -280,7 +320,7 @@ export default function ViewVans() {
 					styles.wrapperCustom,
 					]}
 				>
-					<Text style={styles.pressable}>Add Van</Text>
+					<Text style={styles.pressable}>Add Driver</Text>
 				</Pressable>
 
 			</ScrollView>
@@ -300,7 +340,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		textAlign: "center",
 	},
-	vanCard: {
+	driverCard: {
 		width: '40%',
 		alignItems: "center",
 		justifyContent: "center",
@@ -314,29 +354,13 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		elevation: 3,
 	},
-	vanNickname: {
+	driverDetails: {
 		fontFamily: "AlfaSlabOne_400Regular",
 		fontSize: 16,
 		fontWeight: "bold",
 		marginBottom: 5,
 		textAlign: "center",
 		color: "#3c6ca8",
-	},
-	regPlate: {
-		marginTop: 10,
-		backgroundColor: "#FFD700",
-		paddingVertical: 2,
-		paddingHorizontal: 15,
-		borderRadius: 5,
-		borderWidth: 2,
-		borderColor: "#000",
-		textAlign: "center",
-		minWidth: 100,
-		overflow: "hidden",
-	},
-	regPlateText: {
-		fontSize: 14,
-		fontWeight: "bold",
 	},
 	iconContainer: {
 		flexDirection: "row",

@@ -4,35 +4,53 @@ import config from "@/config";
 import * as SecureStore from 'expo-secure-store';
 
 interface AuthContextType {
-    isAuthenticated: boolean;
+    isAuthenticatedDriver: boolean;
+	isAuthenticatedOwner: boolean;
     login: (data: { email: string; password: string }) => Promise<void>;
     logout: () => void;
     loading: boolean;
 }
 
-async function saveUserDetails(token: string, ownerFirstName: string, ownerSurname: string, companyId: string) {
+async function saveOwnerDetails(token: string, ownerFirstName: string, ownerSurname: string, companyId: string, role: string) {
     await SecureStore.setItemAsync("userToken", token);
 	await SecureStore.setItemAsync("firstName", ownerFirstName);
 	await SecureStore.setItemAsync("surname", ownerSurname)
 	await SecureStore.setItemAsync("companyId", companyId)
+	await SecureStore.setItemAsync("role", role)
 }
 
+async function saveDriverDetails(token: string, driverFirstName: string, driverSurname: string, driverId: string, companyId: string, role: string) {
+    await SecureStore.setItemAsync("userToken", token);
+	await SecureStore.setItemAsync("firstName", driverFirstName);
+	await SecureStore.setItemAsync("surname", driverSurname)
+	await SecureStore.setItemAsync("driverId", driverId)
+	await SecureStore.setItemAsync("companyId", companyId)
+	await SecureStore.setItemAsync("role", role)
+}
 
 async function getToken() {
-  return await SecureStore.getItemAsync("userToken");
+ 	return await SecureStore.getItemAsync("userToken");
+}
+
+async function getRole() {
+	return await SecureStore.getItemAsync("role");
 }
 
 async function removeUserDetails() {
-  await SecureStore.deleteItemAsync("userToken");
-  await SecureStore.deleteItemAsync("firstName");
-  await SecureStore.deleteItemAsync("surname");
+	await SecureStore.deleteItemAsync("userToken");
+	await SecureStore.deleteItemAsync("firstName");
+	await SecureStore.deleteItemAsync("surname");
+	await SecureStore.deleteItemAsync("driverId")
+	await SecureStore.deleteItemAsync("companyId")
+	await SecureStore.deleteItemAsync("role")
 }
 
 
 
 const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isAuthenticatedOwner, setIsAuthenticatedOwner] = useState(false);
+	const [isAuthenticatedDriver, setIsAuthenticatedDriver] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const router = useRouter();
 
@@ -41,12 +59,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
 		const checkAuth = async () => {
 			const token = await getToken();
-			if (token) {
-				setIsAuthenticated(true);
+			const role = await getRole();
+			console.log(token)
+			console.log("the role is", role)
+			if (token && role === 'owner') {
+				setIsAuthenticatedOwner(true);
+			}
+			if (token && role === 'driver') {
+				setIsAuthenticatedDriver(true);
 			}
 			setLoading(false);
 		};
 		checkAuth();
+		
     }, []);
 
 
@@ -59,13 +84,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     
         try {
-          // const response = await fetch("https://icecream-web-one.vercel.app/api/log-in-companies", {
-          //   method: "POST",
-          //   headers: {
-          //     "Content-Type": "application/json",
-          //   },
-          //   body: JSON.stringify(data),
-          // });
 			const response = await fetch(`${apiUrl}/log-in-companies`, {
 				method: "POST",
 				headers: {
@@ -74,10 +92,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				body: JSON.stringify(data),
 			});
 			const result = await response.json();
+			// check for role and redirect accordingly
+			console.log("the result is", result)
 				if (response.ok) {
-					await saveUserDetails(result.token, result.ownerFirstName, result.ownerSurname, result.companyId);
-					setIsAuthenticated(true);
-					router.replace("/(auth)/(tabs)"); // Redirect to home tab
+					if(result.role === 'owner') {
+						await saveOwnerDetails(result.token, result.ownerFirstName, result.ownerSurname, result.companyId, result.role);
+						setIsAuthenticatedOwner(true);
+						router.replace("/(authOwner)/(tabsOwner)"); // Redirect to home tab
+					}
+					if (result.role === 'driver') {
+						await saveDriverDetails(result.token, result.driverFirstName, result.driverSurname, result.driverId, result.companyId, result.role);
+						setIsAuthenticatedDriver(true);
+						router.replace("/(authDriver)"); // Redirect to home tab
+					}
+
 				} else {
 					throw new Error(result.message || "Invalid credentials")
 				}         
@@ -92,12 +120,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout function (Redirect to Auth Screen)
 	const logout = async () => {
 		await removeUserDetails();
-		setIsAuthenticated(false);
-		router.replace("/(public)/Home"); //  Redirect to home screen
+		const token = await getToken();
+		const role = await getRole();
+		console.log(token)
+		console.log("the role is", role)
+		setIsAuthenticatedDriver(false);
+		setIsAuthenticatedOwner(false);
+		router.replace("/(publicSupplier)/Home"); //  Redirect to home screen
 	};
 
 	return (
-		<AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+		<AuthContext.Provider value={{ isAuthenticatedDriver, isAuthenticatedOwner, login, logout, loading }}>
 			{children}
 		</AuthContext.Provider>
 	);
