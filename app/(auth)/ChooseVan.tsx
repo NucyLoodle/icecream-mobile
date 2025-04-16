@@ -73,7 +73,7 @@ const ChooseVan = () => {
 					pathname: "/(auth)/TrackVan",
                     params: {
 						vanId: van.van_id,
-						driverId: driverId || "", 
+						driverId: driverId, 
 					},
                 });
             } else {
