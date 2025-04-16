@@ -76,7 +76,9 @@ const ChooseVan = () => {
 						driverId: driverId || "", 
 					},
                 });
-            }
+            } else {
+				throw new Error(result.error || "Please try again");
+			}
 
         } catch (error: any) {
             Alert.alert("Error", "Sorry, there was an error. Please try again."); 
