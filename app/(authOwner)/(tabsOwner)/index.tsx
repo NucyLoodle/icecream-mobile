@@ -6,6 +6,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 export default function Index() {
 	// logged in users can see this page
 	const [name, setName] = useState<string | null>(null);
@@ -28,48 +32,36 @@ export default function Index() {
 			<View>
 				<Pressable
 					onPress={() => router.push("/(authOwner)/viewVans")}
-						style={({ pressed }) => [
-							{
-							backgroundColor: pressed ? '#eee060' : '#b8ecce',
-							},
+						style={({pressed}) => [
+							getPressableStyle(pressed),
 							styles.wrapperCustom,
-						]}
-				>
+						]}> 
 					<Text style={styles.pressable}>View my Vans</Text>
 				</Pressable>
 				<Pressable
 					onPress={() => router.push("/(authOwner)/viewDrivers")}
-						style={({ pressed }) => [
-							{
-							backgroundColor: pressed ? '#eee060' : '#b8ecce',
-							},
-							styles.wrapperCustom,
-						]}
-				>
+					style={({pressed}) => [
+						getPressableStyle(pressed),
+						styles.wrapperCustom,
+					]}> 
 					<Text style={styles.pressable}>View my Drivers</Text>
 				</Pressable>
 				<Pressable
 					onPress={() => router.push("/(auth)/ChooseVan")}
-						style={({ pressed }) => [
-							{
-							backgroundColor: pressed ? '#eee060' : '#b8ecce',
-							},
-							styles.wrapperCustom,
-						]}
-				>
+					style={({pressed}) => [
+						getPressableStyle(pressed),
+						styles.wrapperCustom,
+					]}> 
 					<Text style={styles.pressable}>Share my Location</Text>
 				</Pressable>
 			</View>
 
 			<Pressable
 				onPress={logout}
-					style={({ pressed }) => [
-						{
-						backgroundColor: pressed ? '#eee060' : '#da8558',
-						},
-						styles.wrapperCustom,
-					]}
-			>
+				style={({pressed}) => [
+					getPressableStyle(pressed),
+					styles.wrapperCustom,
+				]}> 
 				<Text style={styles.pressable}>Logout</Text>
 			</Pressable>
 		</SafeAreaView>
