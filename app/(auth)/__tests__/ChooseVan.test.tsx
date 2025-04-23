@@ -1,5 +1,4 @@
 import React from 'react';
-import 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import ChooseVan from '../ChooseVan';
