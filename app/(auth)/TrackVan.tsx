@@ -38,9 +38,9 @@ const TrackVan: React.FC = () => {
 		const websocketUrl = config.WebSocketUrl;
 		const socket = new WebSocket(websocketUrl);
 	  
-		socket.onopen = () => console.log("Connected to WebSocket");
-		socket.onerror = (error) => console.error("WebSocket Error:", error);
-		socket.onclose = () => console.log("Client disconnected");
+		// socket.onopen = () => console.log("Connected to WebSocket");
+		// socket.onerror = (error) => console.error("WebSocket Error:", error);
+		// socket.onclose = () => console.log("Client disconnected");
 	  
 		setWs(socket); // store the socket so we can access it in the location watcher or stopSharing
 	  
