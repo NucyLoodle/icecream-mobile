@@ -8,6 +8,10 @@ import { useFocusEffect } from "@react-navigation/native";
 
 // const VAN_ID = "7ea291e4-4299-484d-b293-04f71929d5e7";
 
+export const getVanCardStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 const TrackVan: React.FC = () => {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -174,17 +178,10 @@ const TrackVan: React.FC = () => {
 		  	<Pressable
 				onPress={startSharing}
 				disabled={isSharing}
-				style={({ pressed }) => [
-					styles.button,
-					{
-					backgroundColor: isSharing
-						? '#ccc'
-						: pressed
-						? '#b8ecce'
-						: '#eee060',
-					},
-				]}
-			>
+				style={({pressed}) => [
+				getVanCardStyle(pressed),
+				styles.button,
+			]}>
 				<Text style={[styles.buttonText, isSharing && styles.disabledText]}>
 					Share My Location
 				</Text>
@@ -193,17 +190,10 @@ const TrackVan: React.FC = () => {
 			<Pressable
 				onPress={stopSharing}
 				disabled={!isSharing}
-				style={({ pressed }) => [
+				style={({pressed}) => [
+					getVanCardStyle(pressed),
 					styles.button,
-					{
-					backgroundColor: !isSharing
-						? '#ccc'
-						: pressed
-						? '#b8ecce'
-						: '#eee060',
-					},
-				]}
-			>
+				]}>
 				<Text style={[styles.buttonText, !isSharing && styles.disabledText]}>
 					Stop Sharing
 				</Text>
