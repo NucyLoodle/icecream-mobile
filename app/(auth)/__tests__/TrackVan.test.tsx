@@ -18,6 +18,8 @@ jest.mock('expo-location', () => ({
 	Accuracy: { High: 1 },
 }));
 
+
+
 jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 jest.spyOn(console, 'log').mockImplementation(() => {});
 jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -52,12 +54,12 @@ describe('TrackVan Screen', () => {
 	it('requests permission and starts sharing on "Share My Location" press', async () => {
 		(Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValueOnce({ status: 'granted' });
 		(Location.watchPositionAsync as jest.Mock).mockImplementationOnce((_opts, callback) => {
-		callback({
-			coords: {
-			latitude: 51.5074,
-			longitude: 0.1278,
-			},
-		});
+			callback({
+				coords: {
+				latitude: 51.5074,
+				longitude: 0.1278,
+				},
+			});
 		return Promise.resolve({ remove: jest.fn() });
 		});
 
@@ -77,10 +79,11 @@ describe('TrackVan Screen', () => {
 		fireEvent.press(getByText('Share My Location'));
 
 		await waitFor(() => {
-		expect(Alert.alert).toHaveBeenCalledWith(
-			'Permission Denied',
-			'Enable location services to track your van.'
-		);
+			expect(Alert.alert).toHaveBeenCalledWith(
+				'Permission Denied',
+				'Enable location services to track your van.'
+			);
 		});
 	});
+	  
 });
