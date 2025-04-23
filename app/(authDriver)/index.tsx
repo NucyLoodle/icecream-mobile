@@ -6,6 +6,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 
 export default function Index() {
 	const router = useRouter();
@@ -26,25 +30,19 @@ export default function Index() {
 			<Text style={styles.heading}>Welcome, {name}!</Text>
 			<Pressable
 				onPress={() => router.push("/(auth)/ChooseVan")}
-					style={({ pressed }) => [
-						{
-						backgroundColor: pressed ? '#eee060' : '#b8ecce',
-						},
+					style={({pressed}) => [
+						getPressableStyle(pressed),
 						styles.wrapperCustom,
-					]}
-			>
+					]}>  
 				<Text style={styles.pressable}>Share my Location</Text>
 			</Pressable>
 
 			<Pressable
 				onPress={logout}
-					style={({ pressed }) => [
-						{
-						backgroundColor: pressed ? '#eee060' : '#da8558',
-						},
-						styles.wrapperCustom,
-					]}
-			>
+				style={({pressed}) => [
+					getPressableStyle(pressed),
+					styles.wrapperCustom,
+				]}>  
 				<Text style={styles.pressable}>Logout</Text>
 			</Pressable>
     	</SafeAreaView>
