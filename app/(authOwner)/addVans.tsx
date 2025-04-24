@@ -58,14 +58,6 @@ export default function AddVans() {
 		}
 
 		try {
-		// const response = await fetch("https://icecream-web-one.vercel.app/api/add-vans", {
-		//   method: "POST",
-		//   headers: {
-		//     "Content-Type": "application/json",
-		//   },
-		//   body: JSON.stringify(data),
-		// });
-
 			const response = await fetch(`${apiUrl}/add-vans`, {
 				method: "POST",
 				headers: {
@@ -119,6 +111,7 @@ export default function AddVans() {
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
+					accessibilityLabel="van registration plate"
                 />
                 )}
             />
@@ -138,12 +131,11 @@ export default function AddVans() {
                     onChangeText={onChange}
                     value={value}
                     blurOnSubmit={false}
+					accessibilityLabel="van nickname"
 
                 />
                 )}
-            />
-            {errors.vanNickname && <Text style={styles.error}>{errors.vanNickname.message}</Text>}
-                
+            />                
             {!loading? (
                 <Pressable
                 onPress={handleSubmit(onSubmit)}
