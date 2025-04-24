@@ -9,6 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 
 const schema = z.object({
 	vanReg: z.string()
@@ -140,11 +144,9 @@ export default function AddVans() {
                 <Pressable
                 onPress={handleSubmit(onSubmit)}
                 style={({pressed}) => [
-                    {
-                    backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                    },
-                    styles.wrapperCustom,
-                ]}>         
+					getPressableStyle(pressed),
+					styles.wrapperCustom,
+				]}>         
                 <Text style={styles.pressable}>Submit</Text>        
                 </Pressable>
             ) : (
