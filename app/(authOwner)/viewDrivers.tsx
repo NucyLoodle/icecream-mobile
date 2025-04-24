@@ -9,7 +9,9 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
 
 const schema = z.object({
 	email: z.string()
@@ -33,13 +35,13 @@ export default function ViewDrivers() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editingDriver, setEditingDriver] = useState<any | null>(null);
 	const [editedFirstName, setEditedFirstName] = useState<string>('');
-  const [editedLastName, setEditedLastName] = useState<string>('');
-  const [editedEmail, setEditedEmail] = useState<string>('');
+    const [editedLastName, setEditedLastName] = useState<string>('');
+    const [editedEmail, setEditedEmail] = useState<string>('');
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const firstNameRef = useRef<TextInput>(null);
 	const lastNameRef = useRef<TextInput>(null);
-  const emailRef = useRef<TextInput>(null);
+  	const emailRef = useRef<TextInput>(null);
 
 	const {
 		control,
@@ -209,10 +211,16 @@ export default function ViewDrivers() {
             <Text style={styles.driverDetails}>Validated account? {item.isActive ? 'Yes' : 'No'}</Text>
 
 						<View style={styles.iconContainer}>
-						<TouchableOpacity onPress={() => handleEdit(item)}>
+						<TouchableOpacity 
+							onPress={() => handleEdit(item)}
+							accessibilityLabel="edit-button"
+						>
 							<FontAwesome5 name="edit" size={20} color="#3e1755" style={styles.icon} />
 						</TouchableOpacity>
-						<TouchableOpacity onPress={() => handleDelete(item)}>
+						<TouchableOpacity 
+							onPress={() => handleDelete(item)}
+							accessibilityLabel="delete-button"
+						>
 							<FontAwesome5 name="trash" size={20} color="#da8558" style={styles.icon} />
 						</TouchableOpacity>
 						</View>
@@ -238,6 +246,7 @@ export default function ViewDrivers() {
 							onChangeText={onChange}
 							value={value}
 							blurOnSubmit={false}
+							accessibilityLabel="first-name-input"
 						/>
 						)}
 					/>
@@ -250,13 +259,14 @@ export default function ViewDrivers() {
 						render={({ field: { onChange, onBlur, value } }) => (
 						<TextInput
 							ref={lastNameRef}
-              onSubmitEditing={() => emailRef.current?.focus()}
+              				onSubmitEditing={() => emailRef.current?.focus()}
 							returnKeyType="next"
 							style={styles.input}
 							onBlur={onBlur}
 							onChangeText={onChange}
 							value={value}
 							blurOnSubmit={false}
+							accessibilityLabel="last-name-input"
 						/>
 						)}
 					/>
@@ -275,16 +285,25 @@ export default function ViewDrivers() {
 							onChangeText={onChange}
 							value={value}
 							blurOnSubmit={false}
+							accessibilityLabel="email-input"
 						/>
 						)}
 					/>
 					{errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
 					<View style={styles.modalButtons}>
-						<TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.saveButton}>
+						<TouchableOpacity 
+							onPress={handleSubmit(onSubmit)} 
+							style={styles.saveButton}
+							accessibilityLabel="save-button"
+						>
 						<Text style={styles.saveText}>Save</Text>
 						</TouchableOpacity>
-						<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+						<TouchableOpacity 
+							onPress={handleClose} 
+							style={styles.closeButton}
+							accessibilityLabel="close-button"
+						>
 						<Text style={styles.closeText}>Close</Text>
 						</TouchableOpacity>
 					</View>
@@ -298,10 +317,18 @@ export default function ViewDrivers() {
 					<View style={styles.modalContent}>
 						<Text>Are you sure you want to delete {editedFirstName} {editedLastName}?</Text>
 						<View style={styles.modalButtons}>
-						<TouchableOpacity onPress={handleConfirmDelete} style={styles.saveButton}>
+						<TouchableOpacity 
+							onPress={handleConfirmDelete} 
+							style={styles.saveButton}
+							accessibilityLabel="confirm-delete-button"
+						>
 							<Text style={styles.saveText}>Delete</Text>
 						</TouchableOpacity>
-						<TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+						<TouchableOpacity 
+							onPress={handleClose} 
+							style={styles.closeButton}
+							accessibilityLabel="cancel-button"
+						>
 							<Text style={styles.closeText}>Cancel</Text>
 						</TouchableOpacity>
 						</View>
@@ -313,13 +340,10 @@ export default function ViewDrivers() {
 
 				<Pressable
 					onPress={() => router.push("/(authOwner)/addDrivers")}
-					style={({ pressed }) => [
-					{
-						backgroundColor: pressed ? '#eee060' : '#b8ecce',
-					},
-					styles.wrapperCustom,
-					]}
-				>
+					style={({pressed}) => [
+						getPressableStyle(pressed),
+						styles.wrapperCustom,
+					]}>
 					<Text style={styles.pressable}>Add Driver</Text>
 				</Pressable>
 
