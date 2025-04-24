@@ -9,6 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
 
 const addDriverSchema = z.object({
     firstName: z.string().nonempty({ message: "Your first name is required" }).min(2, { message: "Must be at least 2 characters" }),
@@ -54,14 +57,6 @@ export default function AddDrivers() {
 		}
 
 		try {
-		// const response = await fetch("https://icecream-web-one.vercel.app/api/add-vans", {
-		//   method: "POST",
-		//   headers: {
-		//     "Content-Type": "application/json",
-		//   },
-		//   body: JSON.stringify(data),
-		// });
-
 			const response = await fetch(`${apiUrl}/add-drivers`, {
 				method: "POST",
 				headers: {
@@ -121,6 +116,7 @@ export default function AddDrivers() {
                     blurOnSubmit={false}
                     textContentType="givenName"
                     autoComplete="given-name"
+                    accessibilityLabel="First name"
                 />
                 )}
             />
@@ -143,6 +139,7 @@ export default function AddDrivers() {
                     blurOnSubmit={false}
                     textContentType="familyName"
                     autoComplete="family-name"
+                    accessibilityLabel="surname"
 
                 />
                 )}
@@ -164,6 +161,7 @@ export default function AddDrivers() {
                     blurOnSubmit={false}
                     textContentType="emailAddress"
                     autoComplete="email"
+                    accessibilityLabel="email"
 
                 />
                 )}
@@ -174,11 +172,9 @@ export default function AddDrivers() {
                 <Pressable
                 onPress={handleSubmit(onSubmit)}
                 style={({pressed}) => [
-                    {
-                    backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                    },
+                    getPressableStyle(pressed),
                     styles.wrapperCustom,
-                ]}>         
+                ]}>           
                 <Text style={styles.pressable}>Submit</Text>        
                 </Pressable>
             ) : (
