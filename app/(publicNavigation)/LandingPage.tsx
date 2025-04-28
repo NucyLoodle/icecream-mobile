@@ -4,41 +4,41 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as Linking from "expo-linking"
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 export default function LandingPage() {
-      const router = useRouter();
-        const [inviteToken, setInviteToken] = useState<string | null>(null);
+    const router = useRouter();
+    const [inviteToken, setInviteToken] = useState<string | null>(null);
 
-        useEffect(() => {
-          const handleDeepLink = (event: { url: string }) => {
-            const url = event.url;
-            const parsed = Linking.parse(url);
-            if (parsed.queryParams?.token) {
-              const token = parsed.queryParams.token as string;
-              setInviteToken(token);
-              Alert.alert("Invite Token Received", `Token: ${token}`);
-              router.replace({
-                pathname: "/(publicSupplier)/Verify",
-                params: { token },
-              });
-            }
-          };
-          
-      
-          // Listen for deep links
-          const subscription = Linking.addEventListener("url", handleDeepLink);
-      
-          // Check if the app was opened via a deep link
-          Linking.getInitialURL().then((url) => {
-            if (url) handleDeepLink({ url });
-          });
-      
-          return () => {
-            subscription.remove();
-          };
-        }, []);
+	useEffect(() => {
+		const handleDeepLink = (event: { url: string }) => {
+			const url = event.url;
+			const parsed = Linking.parse(url);
+			if (parsed.queryParams?.token) {
+				const token = parsed.queryParams.token as string;
+				setInviteToken(token);
+				Alert.alert("Invite Token Received", `Token: ${token}`);
+				router.replace({
+					pathname: "/(publicSupplier)/Verify",
+					params: { token },
+				});
+			}
+		};
+		
+		const subscription = Linking.addEventListener("url", handleDeepLink);
+		Linking.getInitialURL().then((url) => {
+			if (url) handleDeepLink({ url });
+		});
+	
+		return () => {
+			subscription.remove();
+		};
+	}, []);
 
 
-  return (
+  	return (
 
     <SafeAreaView style={styles.container} >
         <Text style={styles.header}>Icecream Tracker</Text>
@@ -46,29 +46,24 @@ export default function LandingPage() {
                 <Pressable
                     onPress={() => router.push("/(users)")}
                     style={({pressed}) => [
-                        {
-                        backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                        },
-                        styles.wrapperCustom,
-                    ]}>         
+						getPressableStyle(pressed),
+						styles.wrapperCustom,
+                  ]}>         
                     <Text style={styles.pressable}>Looking for Icecream?</Text>        
                 </Pressable>
 
                 <Pressable
                     onPress={() => router.push({pathname: "/(publicSupplier)/Home"})}
                     style={({pressed}) => [
-                        {
-                        backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                        },
-                        styles.wrapperCustom,
-                    ]}>         
+						getPressableStyle(pressed),
+						styles.wrapperCustom,
+                  ]}>        
                     <Text style={styles.pressable}>Icecream Business? Click here!</Text>        
                 </Pressable>
 
             </View>
     </SafeAreaView>
-  );
-}
+)};
 
 
 const styles = StyleSheet.create({
