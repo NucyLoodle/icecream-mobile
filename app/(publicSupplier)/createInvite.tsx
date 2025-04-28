@@ -9,6 +9,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import config from "@/config";
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 
 // company sign up form
 // company signs up with email, telephone, password, company name, company website, registered business number,
@@ -113,14 +117,6 @@ export default function SignUpCompany() {
 		}
 
 		try {
-		// const response = await fetch("https://icecream-web-one.vercel.app/api/sign-up-companies", {
-		//   method: "POST",
-		//   headers: {
-		//     "Content-Type": "application/json",
-		//   },
-		//   body: JSON.stringify(data),
-		// });
-
 			const response = await fetch(`${apiUrl}/sign-up-companies`, {
 				method: "POST",
 				headers: {
@@ -180,6 +176,7 @@ export default function SignUpCompany() {
 						blurOnSubmit={false}
 						textContentType="givenName"
 						autoComplete="given-name"
+						accessibilityLabel="first name"
 					/>
 					)}
 				/>
@@ -201,6 +198,7 @@ export default function SignUpCompany() {
 						blurOnSubmit={false}
 						textContentType="familyName"
 						autoComplete="family-name"
+						accessibilityLabel="last name"
 					/>
 					)}
 				/>
@@ -222,6 +220,7 @@ export default function SignUpCompany() {
 						blurOnSubmit={false}
 						textContentType="organizationName"
 						autoComplete="organization"
+						accessibilityLabel="organization name"
 						
 					/>
 					)}
@@ -245,10 +244,10 @@ export default function SignUpCompany() {
 						blurOnSubmit={false}
 						textContentType="URL"
 						autoComplete="url"
+						accessibilityLabel="website"
 					/>
 					)}
 				/>
-				{errors.companyWebsite && <Text style={styles.error}>{errors.companyWebsite.message}</Text>}
 
 				<Text style={styles.text}>Company Number (from Companies House)</Text>
 				
@@ -265,6 +264,7 @@ export default function SignUpCompany() {
 						onChangeText={onChange}
 						value={value}
 						blurOnSubmit={false}
+						accessibilityLabel="company number"
 					/>
 					)}
 				/>
@@ -286,6 +286,7 @@ export default function SignUpCompany() {
 						blurOnSubmit={false}
 						textContentType="emailAddress"
 						autoComplete="email"
+						accessibilityLabel="email"
 
 					/>
 					)}
@@ -308,6 +309,7 @@ export default function SignUpCompany() {
 						blurOnSubmit={false}
 						textContentType="telephoneNumber"
 						autoComplete="tel"
+						accessibilityLabel="telephone"
 					/>
 					)}
 				/>
@@ -331,6 +333,7 @@ export default function SignUpCompany() {
 						textContentType="newPassword"
 						autoComplete="new-password"
 						secureTextEntry={!showPassword}
+						accessibilityLabel="password"
 					/>
 					<Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
 						<MaterialCommunityIcons
@@ -360,6 +363,7 @@ export default function SignUpCompany() {
 						textContentType="newPassword"
 						autoComplete="new-password"
 						secureTextEntry={!showConfirmPassword}
+						accessibilityLabel="confirm password"
 						/>
 					<Pressable onPress={toggleShowConfirmPassword} style={styles.iconContainer}>
 						<MaterialCommunityIcons
@@ -377,9 +381,7 @@ export default function SignUpCompany() {
 					<Pressable
 					onPress={handleSubmit(onSubmit)}
 					style={({pressed}) => [
-						{
-						backgroundColor: pressed ? '#eee060' : '#b8ecce',
-						},
+						getPressableStyle(pressed),
 						styles.wrapperCustom,
 					]}>         
 					<Text style={styles.pressable}>Submit</Text>        
