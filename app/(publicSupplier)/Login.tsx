@@ -8,6 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from "@/context/AuthContext";
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 const verifySchema = z.object({
     email: z.string().email().nonempty().transform((val) => val.toLowerCase()),
     password: z.string().nonempty(),
@@ -60,10 +64,11 @@ export default function Login() {
                             onChangeText={onChange}
                             placeholder="Email"
                             value={value}
+                            accessibilityLabel="email"
                             />
                         )}
                     />
-                    {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+                    {/* {errors.email && <Text style={styles.error}>{errors.email.message}</Text>} */}
                 </View>
                 <View>
                     <Controller
@@ -81,6 +86,7 @@ export default function Login() {
                             blurOnSubmit={false}
                             secureTextEntry={!showPassword}
                             placeholder="Password"
+                            accessibilityLabel="password"
                         />
                         <Pressable onPress={toggleShowPassword} style={styles.iconContainer}>
                             <MaterialCommunityIcons
@@ -92,17 +98,15 @@ export default function Login() {
                         </View>
                         )}
                     />
-                    {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+                    {/* {errors.password && <Text style={styles.error}>{errors.password.message}</Text>} */}
                 </View>
                 {!loading? (
                     <Pressable
                         onPress={handleSubmit(onSubmit)} 
                         style={({pressed}) => [
-                            {
-                            backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                            },
-                            styles.wrapperCustom,
-                        ]}>         
+                        getPressableStyle(pressed),
+                        styles.wrapperCustom,
+                    ]}>        
                         <Text style={styles.pressable}>Submit</Text>        
                     </Pressable>
                 ) : (
