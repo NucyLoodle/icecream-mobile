@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Text, Alert } from 'react-native';
 import SignUpCompany from '../createInvite';
 import { getPressableStyle } from '../createInvite'; 
+import { TextInput } from 'react-native';
 
 jest.mock('expo-router', () => ({
     useLocalSearchParams: jest.fn().mockReturnValue({ email: 'test@example.com', driverId: 'driver123' }),
@@ -35,9 +36,14 @@ describe('SignUpCompany component', () => {
 
             return Promise.reject('Unknown endpoint');
         });
+        jest.spyOn(TextInput.prototype, 'focus').mockImplementation(() => {});
 
         jest.clearAllMocks();
     });
+
+    // afterEach(() => {
+    //     jest.restoreAllMocks();
+    // });
 
     it('shows validation errors for invalid inputs', async () => {
         const { getByText, getByLabelText } = render(<SignUpCompany />);
@@ -274,6 +280,34 @@ describe('SignUpCompany component', () => {
         });
     });
 
+    it('shows generic failure alert on trying to sign up when waiting on manual verification', async () => {
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: false,
+            json: () => Promise.resolve({}),
+        });
+
+        const { getByText, getByLabelText } = render(<SignUpCompany />);
+
+        fireEvent.changeText(getByLabelText('first name'), 'Test');
+        fireEvent.changeText(getByLabelText('last name'), 'Test');
+        fireEvent.changeText(getByLabelText('organization name'), 'Test Company');
+        fireEvent.changeText(getByLabelText('website'), 'www.test.com');
+        fireEvent.changeText(getByLabelText('email'), 'test@test.com');
+        fireEvent.changeText(getByLabelText('company number'), '00000000');
+        fireEvent.changeText(getByLabelText('telephone'), '00000000000');
+        fireEvent.changeText(getByLabelText('password'), 'Password1!');
+        fireEvent.changeText(getByLabelText('confirm password'), 'Password1!');
+        
+        fireEvent.press(getByText('Submit'));
+
+        await waitFor(() => {
+            expect(Alert.alert).toHaveBeenCalledWith(
+                'Error', "Failed to create invite"
+                
+            );
+        });
+    });
+
     it('toggles password visibility', async () => {
         const { getAllByText, getByLabelText } = render(<SignUpCompany />);
     
@@ -305,5 +339,56 @@ describe('SignUpCompany component', () => {
         expect(getPressableStyle(true).backgroundColor).toBe('#b8ecce');
         expect(getPressableStyle(false).backgroundColor).toBe('#eab2bb');
     });
+
+    it('focuses the surname field when you submit the first name', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        const firstNameInput = getByLabelText('first name');
+        fireEvent(firstNameInput, 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses the company name field when you submit the surname', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        const surnameInput = getByLabelText('last name');  
+        fireEvent(surnameInput, 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses company website when you submit the company name', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        fireEvent(getByLabelText('organization name'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+    
+    it('focuses company number when you submit the company website', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        fireEvent(getByLabelText('website'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses email when you submit the company number', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        fireEvent(getByLabelText('company number'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses telephone when you submit the email', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        fireEvent(getByLabelText('email'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses password when you submit the telephone', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        fireEvent(getByLabelText('telephone'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses confirm password when you submit the password', () => {
+        const { getByLabelText } = render(<SignUpCompany />);
+        fireEvent(getByLabelText('password'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+    
 
 });
