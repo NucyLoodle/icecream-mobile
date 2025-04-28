@@ -4,6 +4,7 @@ import AddDrivers from '../addDrivers';
 import * as SecureStore from 'expo-secure-store';
 import { getPressableStyle } from '../addDrivers'; 
 import { Alert } from 'react-native';
+import { TextInput } from 'react-native';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -38,6 +39,7 @@ describe('AddDrivers Component', () => {
     
             return Promise.reject('Unknown endpoint');
         });
+        jest.spyOn(TextInput.prototype, 'focus').mockImplementation(() => {});
         jest.clearAllMocks();
     });
 
@@ -213,6 +215,18 @@ describe('AddDrivers Component', () => {
         });
         mockError.mockRestore();
     }); 
+
+    it('focuses last name when you submit first name', () => {
+        const { getByLabelText } = render(<AddDrivers />);
+        fireEvent(getByLabelText('First name'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('focuses email when you submit last name', () => {
+        const { getByLabelText } = render(<AddDrivers />);
+        fireEvent(getByLabelText('surname'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
       
 });
 
