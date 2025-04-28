@@ -13,6 +13,10 @@ const verifySchema = z.object({
     email: z.string().email().nonempty().transform((val) => val.toLowerCase()),
 });
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 export default function Verify() {
     const router = useRouter();
     const { token } = useLocalSearchParams();
@@ -31,7 +35,7 @@ export default function Verify() {
   	useEffect(() => {
 		console.log("Token from route params:", token);
 		if (token) {
-		setValue('token', typeof token === "string" ? token : ""); // ensure token is a string
+			setValue('token', typeof token === "string" ? token : ""); // ensure token is a string
 		}
 	}, [token, setValue]);
 
@@ -110,10 +114,11 @@ export default function Verify() {
 						onBlur={onBlur}
 						onChangeText={onChange}
 						value={value}
+						accessibilityLabel="email"
 						/>
 					)}
                 />
-                {errors.token && <Text style={styles.error}>{errors.token.message}</Text>}
+                {/* {errors.token && <Text style={styles.error}>{errors.token.message}</Text>} */}
 
                 <Text style={styles.text}>Enter your token</Text>
                 <Controller
@@ -128,17 +133,15 @@ export default function Verify() {
 						/>
 					)}
                 />
-                {errors.token && <Text style={styles.error}>{errors.token.message}</Text>}
+                {/* {errors.token && <Text style={styles.error}>{errors.token.message}</Text>} */}
 
 				{!loading? (
 					<Pressable
 						onPress={handleSubmit(onSubmit)}
 						style={({pressed}) => [
-						{
-							backgroundColor: pressed ? '#eee060' : '#b8ecce',
-						},
+						getPressableStyle(pressed),
 						styles.wrapperCustom,
-						]}>         
+					]}>         
 						<Text style={styles.pressable}>Submit</Text>        
 					</Pressable>
 					) : (
