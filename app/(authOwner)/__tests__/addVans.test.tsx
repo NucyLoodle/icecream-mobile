@@ -4,6 +4,7 @@ import AddVans from '../addVans';
 import * as SecureStore from 'expo-secure-store';
 import { getPressableStyle } from '../addVans'; 
 import { Alert } from 'react-native';
+import { TextInput } from 'react-native';
 
 
 const mockPush = jest.fn();
@@ -39,6 +40,7 @@ describe('AddVans Component', () => {
     
             return Promise.reject('Unknown endpoint');
         });
+        jest.spyOn(TextInput.prototype, 'focus').mockImplementation(() => {});
         jest.clearAllMocks();
     });
 
@@ -156,6 +158,12 @@ describe('AddVans Component', () => {
         });
         mockError.mockRestore();
     }); 
+
+    it('focuses van nickname when you submit van reg', () => {
+        const { getByLabelText } = render(<AddVans />);
+        fireEvent(getByLabelText('van registration plate'), 'submitEditing');
+        expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
+    });
       
 });
 
