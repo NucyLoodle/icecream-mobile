@@ -11,6 +11,10 @@ import { useLocalSearchParams } from "expo-router";
 import { useRouter } from "expo-router";
 import config from "@/config";
 
+export const getPressableStyle = (pressed: boolean) => ({
+	backgroundColor: pressed ? '#b8ecce' : '#eab2bb',
+});
+
 const schema = z.object({
 	password: z.string()
 				.min(8, { message: 'Password must be at least 8 characters.' })
@@ -32,7 +36,7 @@ const schema = z.object({
 	}
 });
 
-export default function createPassword() {
+export default function CreatePassword() {
     const { email, driverId } = useLocalSearchParams();
     console.log("driverId:", driverId, "email:", email);
     const router = useRouter();
@@ -91,7 +95,7 @@ export default function createPassword() {
                 throw new Error(result.error || "Failed to save password");
             }
         } catch (error: any) {
-            Alert.alert("Login failed", "Please check your credentials and try again.");
+            Alert.alert("Failed", "Password creation failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -149,6 +153,7 @@ export default function createPassword() {
                             textContentType="newPassword"
                             autoComplete="new-password"
                             secureTextEntry={!showConfirmPassword}
+                            placeholder="Confirm password"
                             />
                         <Pressable onPress={toggleShowConfirmPassword} style={styles.iconContainer}>
                             <MaterialCommunityIcons
@@ -170,11 +175,9 @@ export default function createPassword() {
                             handleSubmit(onSubmit)();
                         }}
                         style={({pressed}) => [
-                            {
-                            backgroundColor: pressed ? '#eee060' : '#b8ecce',
-                            },
-                            styles.wrapperCustom,
-                        ]}>         
+                        getPressableStyle(pressed),
+                        styles.wrapperCustom,
+                    ]}>       
                         <Text style={styles.pressable}>Submit</Text>        
                     </Pressable>
                 ) : (
