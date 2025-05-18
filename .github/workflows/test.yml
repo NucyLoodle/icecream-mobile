@@ -30,6 +30,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Install dependencies
+        working-directiory: ./app
         run: npm ci
 
       - name: Run Jest tests
