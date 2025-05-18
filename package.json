@@ -21,7 +21,11 @@
         "!**/*.d.ts"
     ],
     "coverageReporters": ["text", "lcov"],
-    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"]
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "moduleNameMapper": {
+    "^@/config$": "<rootDir>/__mocks__/config.js"
+
+    }
   },
   "dependencies": {
     "@expo-google-fonts/alfa-slab-one": "^0.2.3",
