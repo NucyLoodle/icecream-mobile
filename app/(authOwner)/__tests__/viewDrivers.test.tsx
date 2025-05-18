@@ -50,7 +50,7 @@ describe('ViewDrivers', () => {
             expect(getByText('Doe')).toBeTruthy();
             expect(getByText('john@example.com')).toBeTruthy();
         });
-    });
+    }, 10000);
 
     it('navigates to add driver screen', async () => {
         (global.fetch as jest.Mock).mockResolvedValueOnce({

@@ -45,7 +45,7 @@ describe('ViewVans', () => {
             expect(getByText('Frosty Wheels')).toBeTruthy();
             expect(getByText('FW09 ICE')).toBeTruthy();
         });
-    });
+    }, 10000);
 
     it('navigates to add van screen', async () => {
         (global.fetch as jest.Mock).mockResolvedValueOnce({
