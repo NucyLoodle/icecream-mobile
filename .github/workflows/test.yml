@@ -30,6 +30,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Install dependencies
+        working-directory: ./icecream-mobile
         run: npm ci
 
       - name: Run Jest tests
