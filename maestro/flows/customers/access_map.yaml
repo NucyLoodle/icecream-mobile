@@ -1,0 +1,6 @@
+appId: com.nucyloodle.mobileapp
+---
+
+- runFlow:
+    file: ../flow.yaml
+- tapOn: "Looking for Icecream?"
