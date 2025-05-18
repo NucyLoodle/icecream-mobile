@@ -1,6 +1,6 @@
 appId: com.nucyloodle.mobileapp
 ---
-- launchApp
+- launchApp  
 - assertVisible: "Icecream Tracker"
 - assertVisible: "Looking for Icecream?"
 - assertVisible: "Icecream Business? Click here!"
