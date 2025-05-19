@@ -40,7 +40,7 @@ const ChooseVan = () => {
                     const data: any[] = await response.json();
                     setVans(data); 
                 } catch (error) {
-                    console.error("Error fetching vans:", error);
+                    // console.error("Error fetching vans:", error);
                 } finally {
                     setLoading(false);
                 }
@@ -48,12 +48,12 @@ const ChooseVan = () => {
 
             fetchVans();
             } else {
-                console.log("Waiting for companyId...");
+                // console.log("Waiting for companyId...");
             }
         }, [companyId, apiUrl]);
 
     const selectVan = async (van: any) => {
-        console.log(van.van_id);
+        // console.log(van.van_id);
         try {
             const driverId = await SecureStore.getItemAsync("driverId");
 			const response = await fetch(`${apiUrl}/choose-van`, {
