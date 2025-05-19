@@ -8,7 +8,7 @@ export default function AuthSharedLayout() {
     const { isAuthenticatedOwner, isAuthenticatedDriver } = useAuth();
     
     if (!isAuthenticatedOwner && !isAuthenticatedDriver) {
-        console.log("Redirecting to /landingPage")
+        // console.log("Redirecting to /landingPage")
         return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (

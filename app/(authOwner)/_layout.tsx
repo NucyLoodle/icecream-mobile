@@ -8,7 +8,7 @@ export default function AuthOwnerLayout() {
     const { isAuthenticatedOwner } = useAuth();
     
     if (!isAuthenticatedOwner) {
-        console.log("Redirecting to /home")
+        // console.log("Redirecting to /home")
         return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (

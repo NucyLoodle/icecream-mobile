@@ -8,11 +8,11 @@ export default function LandingPageLayout() {
     const { isAuthenticatedOwner, isAuthenticatedDriver } = useAuth();
     
     if (isAuthenticatedOwner) {
-        console.log("Redirecting to owner home page")
+        // console.log("Redirecting to owner home page")
         return <Redirect href="/(authOwner)/(tabsOwner)" />
     }
     if (isAuthenticatedDriver) {
-        console.log("Redirecting to driver home page")
+        // console.log("Redirecting to driver home page")
         return <Redirect href="/(authDriver)" />
     }
     return (

@@ -8,7 +8,7 @@ export default function AuthDriverLayout() {
     const { isAuthenticatedDriver } = useAuth();
     
     if (!isAuthenticatedDriver) {
-        console.log("Redirecting to /home")
+        // console.log("Redirecting to /home")
         return <Redirect href="/(publicNavigation)/LandingPage" />
     }
     return (
