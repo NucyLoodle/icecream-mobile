@@ -1,10 +1,7 @@
 jest.mock('@expo/vector-icons', () => {
-    const View = require('react-native/Libraries/Components/View/View');
-    const MockIcon = (props) => {
-      return View; // simple placeholder component
-    };
-  
-    return {
-        FontAwesome5: MockIcon,
-    };
-  });
+	const React = require('react');
+	const { Text } = require('react-native');
+	return {
+		FontAwesome5: ({ name }) => <Text>{`Icon: ${name}`}</Text>,
+	};
+});
