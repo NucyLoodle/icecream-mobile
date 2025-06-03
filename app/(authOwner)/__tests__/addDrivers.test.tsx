@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import AddDrivers from '../addDrivers';
 import * as SecureStore from 'expo-secure-store';
 import { getPressableStyle } from '../addDrivers'; 
@@ -216,15 +216,19 @@ describe('AddDrivers Component', () => {
         mockError.mockRestore();
     }); 
 
-    it('focuses last name when you submit first name', () => {
+    it('focuses last name when you submit first name', async () => {
         const { getByLabelText } = render(<AddDrivers />);
-        fireEvent(getByLabelText('First name'), 'submitEditing');
+        await act(async() => {
+            fireEvent(getByLabelText('First name'), 'submitEditing');
+        });      
         expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
     });
 
-    it('focuses email when you submit last name', () => {
+    it('focuses email when you submit last name', async () => {
         const { getByLabelText } = render(<AddDrivers />);
-        fireEvent(getByLabelText('surname'), 'submitEditing');
+        await act(async() => {
+            fireEvent(getByLabelText('surname'), 'submitEditing');
+        });        
         expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
     });
       
