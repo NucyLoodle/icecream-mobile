@@ -57,7 +57,7 @@ export default function AddVans() {
 		// console.log(data); //debugging statement
 
 		if (!apiUrl) {
-			console.error("API URL is not defined");
+			// console.error("API URL is not defined");
 			return;
 		}
 
@@ -76,7 +76,7 @@ export default function AddVans() {
 			const result = await response.json();
 
 			if (response.ok) {
-				console.log("success")
+				// console.log("success")
 				router.replace("/(authOwner)/(tabsOwner)");
                 setTimeout(() => {
                 router.push("/(authOwner)/viewVans");
@@ -87,7 +87,7 @@ export default function AddVans() {
 
 		} catch (error: any) {
 			if (error.message === "Already registered") {
-				console.log("already registered")
+				// console.log("already registered")
 				Alert.alert("Error", "This van is already registered"); 
 			}
 			
