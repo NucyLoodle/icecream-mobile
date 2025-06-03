@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import AddVans from '../addVans';
 import * as SecureStore from 'expo-secure-store';
 import { getPressableStyle } from '../addVans'; 
@@ -159,9 +159,12 @@ describe('AddVans Component', () => {
         mockError.mockRestore();
     }); 
 
-    it('focuses van nickname when you submit van reg', () => {
+    it('focuses van nickname when you submit van reg', async () => {
         const { getByLabelText } = render(<AddVans />);
-        fireEvent(getByLabelText('van registration plate'), 'submitEditing');
+        await act(async () => {
+            fireEvent(getByLabelText('van registration plate'), 'submitEditing');
+        });
+        
         expect(TextInput.prototype.focus).toHaveBeenCalledTimes(1);
     });
       
