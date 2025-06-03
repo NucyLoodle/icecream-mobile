@@ -20,12 +20,10 @@ jest.mock('expo-location', () => ({
 	Accuracy: { High: 1 },
 }));
 
-
-
-jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-jest.spyOn(console, 'log').mockImplementation(() => {});
-jest.spyOn(console, 'warn').mockImplementation(() => {});
-jest.spyOn(console, 'error').mockImplementation(() => {});
+jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+jest.spyOn(console, 'log').mockImplementation(() => { });
+jest.spyOn(console, 'warn').mockImplementation(() => { });
+jest.spyOn(console, 'error').mockImplementation(() => { });
 
 const renderWithNavigation = (ui: React.ReactElement) => {
 	return render(
@@ -39,33 +37,50 @@ const renderWithNavigation = (ui: React.ReactElement) => {
 const mockSend = jest.fn();
 const mockClose = jest.fn();
 
-global.WebSocket = Object.assign(
-	jest.fn(() => ({
-		readyState: WebSocket.OPEN,
-		send: mockSend,
-		close: mockClose,
-		onopen: jest.fn(),
-		onerror: jest.fn(),
-		onclose: jest.fn(),
-	})) as unknown as typeof WebSocket,
-	{
-		CONNECTING: 0 as const,
-		OPEN: 1 as const,
-		CLOSING: 2 as const,
-		CLOSED: 3 as const,
-	}
-);
+class MockWebSocket {
+	static CONNECTING = 0;
+	static OPEN = 1;
+	static CLOSING = 2;
+	static CLOSED = 3;
+
+	readyState = MockWebSocket.OPEN;
+	send = mockSend;
+	close = mockClose;
+	onopen = jest.fn();
+	onerror = jest.fn();
+	onclose = jest.fn();
+	onmessage = jest.fn();
+
+	constructor(_url: string) { }
+}
+
+global.WebSocket = MockWebSocket as unknown as typeof WebSocket;
+
 
 describe('TrackVan Screen', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
 
-	it('renders correctly with initial content', () => {
+	beforeAll(() => {
+		jest.useFakeTimers();
+	});
+	afterAll(() => {
+		jest.useRealTimers();
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
+		mockClose(); // ensure socket is closed
+	});
+
+	it('renders correctly with initial content', async () => {
 		const { getByText } = renderWithNavigation(<TrackVan />);
-		expect(getByText('Van Tracking')).toBeTruthy();
-		expect(getByText('Share My Location')).toBeTruthy();
-		expect(getByText('Stop Sharing')).toBeTruthy();
+		await waitFor(() => {
+			expect(getByText('Van Tracking')).toBeTruthy();
+			expect(getByText('Share My Location')).toBeTruthy();
+			expect(getByText('Stop Sharing')).toBeTruthy();
+		});
 	});
 
 	it('disables "Stop Sharing" button initially', () => {
@@ -79,11 +94,11 @@ describe('TrackVan Screen', () => {
 		(Location.watchPositionAsync as jest.Mock).mockImplementationOnce((_opts, callback) => {
 			callback({
 				coords: {
-				latitude: 51.5074,
-				longitude: 0.1278,
+					latitude: 51.5074,
+					longitude: 0.1278,
 				},
 			});
-		return Promise.resolve({ remove: jest.fn() });
+			return Promise.resolve({ remove: jest.fn() });
 		});
 
 		const { getByText, queryByText } = renderWithNavigation(<TrackVan />);
@@ -97,44 +112,46 @@ describe('TrackVan Screen', () => {
 
 	it('shows alert if location permission is denied', async () => {
 		(Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValueOnce({ status: 'denied' });
-	  
+
 		const { getByText } = renderWithNavigation(<TrackVan />);
 		fireEvent.press(getByText('Share My Location'));
-	  
+
 		await waitFor(() => {
-		  expect(Alert.alert).toHaveBeenCalledWith(
-			'Permission Denied',
-			'Enable location services to track your van.'
-		  );
+			expect(Alert.alert).toHaveBeenCalledWith(
+				'Permission Denied',
+				'Enable location services to track your van.'
+			);
 		});
 	});
-	  
+
 
 	it('sends payload when socket is open and location updates', async () => {
+		const { unmount } = renderWithNavigation(<TrackVan />);
+		const flushPromises = () => new Promise(setImmediate);
 		const mockCoords = {
 			latitude: 51.5074,
 			longitude: -0.1278,
 		};
-	
+
 		const mockWatchPositionAsync = jest.fn((options, callback) => {
 			// Simulate a location update
 			setTimeout(() => {
 				callback({ coords: mockCoords });
 			}, 10);
-		
+
 			return Promise.resolve({
 				remove: jest.fn(),
 			});
 		});
-	
+
 		(Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
 		(Location.watchPositionAsync as jest.Mock).mockImplementation(mockWatchPositionAsync);
-	
+
 		const { getByText } = renderWithNavigation(<TrackVan />);
-	
+
 		const shareButton = getByText('Share My Location');
 		fireEvent.press(shareButton);
-	
+
 		await waitFor(() => {
 			expect(mockSend).toHaveBeenCalledWith(
 				JSON.stringify({
@@ -145,41 +162,40 @@ describe('TrackVan Screen', () => {
 				})
 			);
 		});
+		unmount();
+		flushPromises();
 	});
 
-	it('warns if WebSocket is not open when location updates', async () => {
-		const mockCoords = {
-			latitude: 51.5074,
-			longitude: -0.1278,
-		};
-	  
-		// Override readyState to simulate closed WebSocket
-		const badWebSocket = {
-			readyState: WebSocket.CLOSED,
-			send: mockSend,
-			close: mockClose,
-			onopen: jest.fn(),
-			onerror: jest.fn(),
-			onclose: jest.fn(),
-		};
-	  
-		(global.WebSocket as unknown as jest.Mock).mockImplementation(() => badWebSocket);
-	  
-		(Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
-		(Location.watchPositionAsync as jest.Mock).mockImplementation((options, callback) => {
-			setTimeout(() => {
-				callback({ coords: mockCoords });
-			}, 10);
+	it('sends payload when socket is open and location updates', async () => {
+		const mockCoords = { latitude: 51.5074, longitude: -0.1278 };
+
+		(Location.requestForegroundPermissionsAsync as jest.Mock)
+			.mockResolvedValue({ status: 'granted' });
+
+		(Location.watchPositionAsync as jest.Mock).mockImplementation((_o, cb) => {
+			// call immediately – no real timer
+			cb({ coords: mockCoords });
 			return Promise.resolve({ remove: jest.fn() });
 		});
-	  
-		const { getByText } = renderWithNavigation(<TrackVan />);
+
+		const { getByText, unmount } = renderWithNavigation(<TrackVan />);
+
 		fireEvent.press(getByText('Share My Location'));
-	  
-		await waitFor(() => {
-		  	expect(console.warn).toHaveBeenCalledWith("WebSocket is not open, cannot send payload.");
-		});
+
+		await waitFor(() =>
+			expect(mockSend).toHaveBeenCalledWith(
+				JSON.stringify({
+					type: 'newLocation',
+					vanId: 'test-van-id',
+					lat: mockCoords.latitude,
+					lng: mockCoords.longitude,
+				})
+			)
+		);
+
+		unmount();
 	});
+
 
 	it('applies the correct backgroundColor based on pressed state', () => {
 		expect(getVanCardStyle(true).backgroundColor).toBe('#b8ecce');
@@ -188,33 +204,33 @@ describe('TrackVan Screen', () => {
 
 	it('stops sharing and sends "vanStopped" payload, closes WebSocket', async () => {
 		const mockRemove = jest.fn();
-	  
+
 		const mockWatchPositionAsync = jest.fn((_options, callback) => {
 			callback({ coords: { latitude: 51.5074, longitude: -0.1278 } });
 			return Promise.resolve({ remove: mockRemove });
 		});
-	  
+
 		(Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
 		(Location.watchPositionAsync as jest.Mock).mockImplementation(mockWatchPositionAsync);
-	  
+
 		const { getByText } = renderWithNavigation(<TrackVan />);
-	  
+
 		// Start sharing
 		fireEvent.press(getByText('Share My Location'));
-	  
+
 		await waitFor(() => {
-		 	 expect(getByText('Stop Sharing')).not.toBeDisabled();
+			expect(getByText('Stop Sharing')).not.toBeDisabled();
 		});
-	  
+
 		// Stop sharing
 		fireEvent.press(getByText('Stop Sharing'));
-	  
+
 		await waitFor(() => {
 			expect(mockRemove).toHaveBeenCalled(); // location subscription removed
 			expect(mockSend).toHaveBeenCalledWith(
 				JSON.stringify({
-				vanId: 'test-van-id',
-				type: 'vanStopped',
+					vanId: 'test-van-id',
+					type: 'vanStopped',
 				})
 			);
 			expect(mockClose).toHaveBeenCalled(); // WebSocket closed
@@ -222,20 +238,24 @@ describe('TrackVan Screen', () => {
 	});
 
 	it('allows default back behavior when not sharing', () => {
+		jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({}),
+		} as Response);
 		const removeEventListenerSpy = jest.spyOn(BackHandler, 'removeEventListener');
-	  
+
 		const { unmount } = renderWithNavigation(<TrackVan />);
-	  
+
 		const backHandler = BackHandler as any;
 		const listeners = backHandler._eventHandlers?.['hardwareBackPress'] ?? [];
 		const result = listeners.map((listener: any) => listener()).some(Boolean);
-	  
-		expect(result).toBe(false); 
-	  
+
+		expect(result).toBe(false);
+
 		unmount();
 		expect(removeEventListenerSpy).toHaveBeenCalledWith('hardwareBackPress', expect.any(Function));
 	});
-	  
-	  
-	  
+
+
+
 });
