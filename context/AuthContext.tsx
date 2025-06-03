@@ -60,8 +60,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		const checkAuth = async () => {
 			const token = await getToken();
 			const role = await getRole();
-			console.log(token)
-			console.log("the role is", role)
+			// console.log(token)
+			// console.log("the role is", role)
 			if (token && role === 'owner') {
 				setIsAuthenticatedOwner(true);
 			}
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   	const login = async (data: { email: string, password: string }) => {
         const apiUrl = config.LocalHostAPI;
         if (!apiUrl) {
-			console.error("API URL is not defined");
+			// console.error("API URL is not defined");
 			return;
         }
     
@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			});
 			const result = await response.json();
 			// check for role and redirect accordingly
-			console.log("the result is", result)
+			// console.log("the result is", result)
 				if (response.ok) {
 					if(result.role === 'owner') {
 						await saveOwnerDetails(result.token, result.ownerFirstName, result.ownerSurname, result.companyId, result.role);
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 					throw new Error(result.message || "Invalid credentials")
 				}         
 		} catch (error: any) {
-			console.log("Error", error.message);
+			// console.log("Error", error.message);
 			throw error    
 		}
   	};
@@ -122,8 +122,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		await removeUserDetails();
 		const token = await getToken();
 		const role = await getRole();
-		console.log(token)
-		console.log("the role is", role)
+		// console.log(token)
+		// console.log("the role is", role)
 		setIsAuthenticatedDriver(false);
 		setIsAuthenticatedOwner(false);
 		router.replace("/(publicSupplier)/Home"); //  Redirect to home screen
