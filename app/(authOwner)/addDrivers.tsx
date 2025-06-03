@@ -52,7 +52,7 @@ export default function AddDrivers() {
 		// console.log(data); //debugging statement
 
 		if (!apiUrl) {
-			console.error("API URL is not defined");
+			// console.error("API URL is not defined");
 			return;
 		}
 
@@ -71,7 +71,7 @@ export default function AddDrivers() {
 			const result = await response.json();
 
 			if (response.ok) {
-				console.log("success")
+				// console.log("success")
 				router.replace("/(authOwner)/(tabsOwner)");
                 setTimeout(() => {
                 router.push("/(authOwner)/viewDrivers");
@@ -82,7 +82,7 @@ export default function AddDrivers() {
 
 		} catch (error: any) {
 			if (error.message === "Already registered") {
-				console.log("already registered")
+				// console.log("already registered")
 				Alert.alert("Error", "This driver is already registered"); 
 			} else if (error.message === "Failed to send verification email.") {
                 Alert.alert("Error", "Unfortunately, we weren't able to send a verification email. Please delete the driver and try again.")
